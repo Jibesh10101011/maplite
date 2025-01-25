@@ -100,7 +100,7 @@ const MapKafka = () => {
           setPath((prevPath) => [...prevPath, { latitude, longitude }]);
           // Send the location data to the Kafka backend
           try {
-            const response = await axios.post(`${BACKEND_URL}/send-location`, {
+            const response = await axios.post(`${BACKEND_URL}/api/send-location`, {
               latitude,
               longitude,
             });
@@ -127,7 +127,7 @@ const MapKafka = () => {
 
     const fetchKafkaMessages = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}/get-kafka-messages`);
+        const response = await axios.get(`${BACKEND_URL}/api/get-kafka-messages`);
         console.log("Response Data = ", response.data);
         if (response.data.success && Array.isArray(response.data.message)) {
           // Create a new object to hold the updated paths

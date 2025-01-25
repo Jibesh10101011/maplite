@@ -1,11 +1,11 @@
-import { ScrollView, StyleSheet, Text, View, Image} from 'react-native'
+import { ScrollView, StyleSheet, Text, View, Image, Alert} from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import {images} from '../../constants/Images'
 import FormFeild from '@/components/FormFeild'
 import CustomButton from '@/components/CustomButton'
-import {createUser} from "../../lib/appwrite";
+import {createUser} from "../../lib/apiBackend";
 
 import { Link } from 'expo-router'
 
@@ -21,7 +21,15 @@ const SignUp = () => {
 
 
   const submit = ()=> {
-    createUser();
+    try {
+      setIsSubmitting(true);
+      createUser(form.username,form.email,form.password);
+    } catch(error:any) {
+      console.log("Error occured during submitting : ",error.message);
+      Alert.alert(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
