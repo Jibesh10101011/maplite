@@ -36,7 +36,7 @@ cd frontend
 this `<Ipv4 Address>` to the `Copied Ipv4 Address`
 
 
-### Step-4 : Run the application
+### Step-4 : Install requirements
 Run the command
 ```bash
 npm install
@@ -69,7 +69,7 @@ click : ctrl+c (for closing)
 ```bash
 cd backend
 ```
-## Step-2 : Install modules
+## Step-2 : Install requirements
 ```bash
 npm install
 ```
