@@ -94,12 +94,12 @@ ipconfig
 
 
 ## Step-8 : Start confluentinc/cp-kafka
-Run the command
-  ```bash
-docker run -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=<IpV4 Address>:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://<IpV4 Address>:9092 -e KAFKA_LISTENER_SECURITY_PROTOCOL=PLAINTEXT -e KAFKA_LISTENER_PORT=9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka
-  ```
+1. Run the command
+    ```bash
+    docker run -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=<IpV4 Address>:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://<IpV4 Address>:9092 -e KAFKA_LISTENER_SECURITY_PROTOCOL=PLAINTEXT -e KAFKA_LISTENER_PORT=9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka
+    ```
 
-And also update `backend/.env` here `BROKERS_CONNECTING_IP="192.168.0.101:9092` simply update `192.168.0.101` to the same `<IpV4 Address>`
+2. And also update `backend/.env` here `BROKERS_CONNECTING_IP="192.168.0.101:9092` simply update `192.168.0.101` to the same `<IpV4 Address>`
 
 
 ## Step-9 : Start the backend Server
