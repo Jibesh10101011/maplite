@@ -11,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
 import axios from "axios"; // For REST API communication
-import { BACKEND_URL } from "@env"
+import { BACKEND_URL, MONGO_URL } from "@env"
 
 
 interface OthersLocationType {

@@ -20,10 +20,15 @@ const SignUp = () => {
   const [isSubmitting,setIsSubmitting] = useState<boolean>(false);
 
 
-  const submit = ()=> {
+  const submit = async()=> {
     try {
+
+      if(!form.username.length && !form.email.length && !form.password.length) {
+        Alert.alert("Fill all the Input Field correctly");
+        return;
+      }
       setIsSubmitting(true);
-      createUser(form.username,form.email,form.password);
+      await createUser(form.username,form.email,form.password);
     } catch(error:any) {
       console.log("Error occured during submitting : ",error.message);
       Alert.alert(error.message);

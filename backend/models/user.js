@@ -28,7 +28,7 @@ userSchema.pre("save",function(next) {
     const user = this;
     if(!user.isModified("password")) return;
     const salt = randomBytes(20).toLocaleString();
-    const hashedPassword = createHmac('sha256',salt).update(user.password);
+    const hashedPassword = createHmac('sha256',salt).update(user.password).digest("hex");
     this.salt=salt;
     this.password=hashedPassword;
     next();
@@ -37,7 +37,7 @@ userSchema.pre("save",function(next) {
 userSchema.static("matchPasswordAndCreateToken",async function(email,password) {
     const user = await this.findOne({email});
     if(!user)  throw new Error("User not found");
-    const hashedPassword = createHmac("sha256",user.salt).update(password);
+    const hashedPassword = createHmac("sha256",user.salt).update(password).digest("hex");
     if(hashedPassword != user.password) throw new Error("Incorrect Password!");
     return createToken(user);
 })

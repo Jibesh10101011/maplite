@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View, Image} from 'react-native'
+import { ScrollView, StyleSheet, Text, View, Image, Alert} from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -6,7 +6,8 @@ import {images} from '../../constants/Images'
 import FormFeild from '@/components/FormFeild'
 import CustomButton from '@/components/CustomButton'
 
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
+import { handleSignIn } from '@/lib/apiBackend'
 
 const SignIn = () => {
 
@@ -18,8 +19,20 @@ const SignIn = () => {
   const [isSubmitting,setIsSubmitting] = useState<boolean>(false);
 
 
-  const submit = ()=> {
-
+  const submit = async()=> {
+    try {
+      setIsSubmitting(true);
+      if(!form.email.length && !form.password.length) {
+        Alert.alert("Fill all the Input Field correctly");
+        return;
+      }
+      await handleSignIn(form.email,form.password);
+    } catch(error) {
+      setIsSubmitting(false);
+      Alert.alert("Error during SignIn");
+    } finally { 
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -57,7 +70,7 @@ const SignIn = () => {
           <View className='justify-center pt-5 flex-row gap-2'>
               <Text className='text-lg text-gray-100 font-pregular'>Don't have account ?</Text>
               <Link href="/(auth)/sign-up" className='text-lg font-psemibold text-orange-400'>
-                maplite
+                Sign Up
               </Link>
 
           </View>
