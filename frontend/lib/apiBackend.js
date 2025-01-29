@@ -2,6 +2,7 @@ import axios from "axios";
 import { BACKEND_URL } from "@env";
 import { router } from "expo-router";
 import { Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export async function createUser(username,email,password) {
     try {
@@ -29,6 +30,8 @@ export async function handleSignIn(email,password) {
         const response = await axios.post(`${BACKEND_URL}/auth/sign-in`,{email,password});
         console.log(response.data);
         if(response.data.success) {
+            const { token } = response.data;
+            await AsyncStorage.setItem("token",token);
             console.log("Sign In successfull ",response.data);
             router.push("/(tabs)");
         } else {
@@ -38,5 +41,20 @@ export async function handleSignIn(email,password) {
     } catch(error) {
         console.log("Error During Sign In");
         router.push("/(auth)/sign-in");
+    }
+}
+
+
+export async function getProtectedData() {
+    try {
+        const token = await AsyncStorage.getItem("token");
+        const response = await axios.get(`${BACKEND_URL}/auth/validate-token`,{
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log("Protected Data = ",response.data);
+        return response.data.user;
+    } catch(error) {
+        Alert.alert("Validation failed");
+        return ""
     }
 }
