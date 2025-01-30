@@ -9,9 +9,7 @@ const roomRoute = require("./routes/room");
 const { connectConsumer } = require("./consumer");
 const mongoose = require("mongoose");
 const socketIo = require("socket.io");
-const Redis = require("ioredis");
 const http = require("http");
-const REDIS_URL = process.env.REDIS_URL;
 
 
 const app = exprees();
@@ -20,7 +18,30 @@ const MONGO_URL = process.env.MONGO_URL;
 
 const server = http.createServer(app);
 const io = socketIo(server,{cors:"*"});
-const subscriber = new Redis(REDIS_URL);
+
+
+
+io.on('connection', (socket) => {
+  console.log('New client connected');
+  socket.on("subscribe",(channel)=>{
+    if(channel) {
+      socket.join(channel);
+    }
+  });
+
+  socket.on('send_message', ({channel,message}) => {
+    if(channel) {
+      console.log(message);
+      io.to(channel).emit('chat_message', message);
+    } else {
+      console.log("No Channel is found");
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
 
 
 async function connectDb() {
@@ -50,30 +71,6 @@ app.use("/auth",authRoute);
 app.use("/api",kafkaRoute);
 app.use("/room",roomRoute);
 
-io.on("connection", (socket) => {
-    console.log("User connected");
-    socket.on("subscribe", (channel) => {
-      if (channel) {
-        socket.join(channel);
-      }
-    });
-  
-    socket.on("disconnect", () => {
-      console.log("A user disconnected");
-    });
-});
-  
-
-function initRedisSubscribe() {
-    console.log("Subscribed to logs ...");
-    subscriber.psubscribe("logs:*");
-    subscriber.on("pmessage", (pattern, channel, message) => {
-      console.log(message);
-      io.to(channel).emit("message", message);
-    });
-}
-
-initRedisSubscribe();
 
 server.listen(PORT, () => {
     console.log(`App is started to localhost : ${PORT}`);

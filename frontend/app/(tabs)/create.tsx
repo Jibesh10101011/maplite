@@ -18,6 +18,7 @@ import { Link, router } from "expo-router";
 import { handleGenerateRoomId, handleSignIn } from "@/lib/apiBackend";
 import Dialog from "@/components/Dialog";
 
+
 const Create = () => {
   const [form, setForm] = useState({
     email: "",
@@ -28,6 +29,7 @@ const Create = () => {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [roomId,setRoomId] = useState<string>("");
   const [isCreating,setIsCreating] = useState({room:false,generating:false});
+
 
   const submit = async () => {
     try {
@@ -45,10 +47,13 @@ const Create = () => {
     }
   };
 
-  const handleJoinRoom = async () => {};
+  const handleJoinRoom = () => {
+    console.log("Room ID = ",roomId);
+    router.push(`/room/${roomId}`);
+  };
 
-  const handleCreateRoom = async () => {
-      
+  const handleCreateRoom = () => {
+      router.push(`/room/${roomId}`);
   };
 
   const generateRoomId = async() => {
@@ -74,8 +79,8 @@ const Create = () => {
           </View>
           <FormFeild
             title="Room ID"
-            value={form.email}
-            setValue={(e) => setForm({ ...form, email: e })}
+            value={roomId}
+            setValue={(e) => setRoomId(e)}
             otherStyles="mt-7"
             placeholder="Enter your room ID"
             keyboardType="email-address"

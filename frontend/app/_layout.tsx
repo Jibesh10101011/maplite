@@ -18,6 +18,8 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
+  console.log("Color Scheme : ",colorScheme);
+
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
@@ -29,12 +31,12 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={DarkTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(map)" options={{ headerShown: false }} />
-        <Stack.Screen name="(room)" options={{ headerShown: false }} />
+        <Stack.Screen name="room/[roomId]" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />

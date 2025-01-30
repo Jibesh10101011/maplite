@@ -32,6 +32,10 @@ const MapLayout = () => {
           name="map-kafka" 
           options={{ headerShown: false }} 
         />
+        <Stack.Screen
+          name="chat-room"
+          options={{  headerShown:false }}
+        />
       
       </Stack>
 

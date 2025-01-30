@@ -49,6 +49,7 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
+    "socket.io-client": "^4.8.1",
     "tailwind-rn": "^4.2.0",
     "tailwindcss-react-native": "^1.7.10"
   },
