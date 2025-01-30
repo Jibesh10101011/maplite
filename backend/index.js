@@ -1,19 +1,27 @@
 require("dotenv").config();
 
 const exprees = require("express");
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const kafkaRoute = require("./routes/kafkaRoutes");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const kafkaRoute = require("./routes/kafka");
 const authRoute = require("./routes/auth");
+const roomRoute = require("./routes/room");
 const { connectConsumer } = require("./consumer");
 const mongoose = require("mongoose");
+const socketIo = require("socket.io");
+const Redis = require("ioredis");
+const http = require("http");
+const REDIS_URL = process.env.REDIS_URL;
 
 
 const app = exprees();
 const PORT = process.env.PORT;
 const MONGO_URL = process.env.MONGO_URL;
 
-console.log("MONGOURL = ",MONGO_URL);
+const server = http.createServer(app);
+const io = socketIo(server,{cors:"*"});
+const subscriber = new Redis(REDIS_URL);
+
 
 async function connectDb() {
     mongoose.connect(MONGO_URL);
@@ -36,10 +44,38 @@ connectDb()
 })();
 
 
-
 app.use(cors());
 app.use(bodyParser.json());
 app.use("/auth",authRoute);
 app.use("/api",kafkaRoute);
+app.use("/room",roomRoute);
 
-app.listen(PORT, () => console.log('Server running on port 3000'));
+io.on("connection", (socket) => {
+    console.log("User connected");
+    socket.on("subscribe", (channel) => {
+      if (channel) {
+        socket.join(channel);
+      }
+    });
+  
+    socket.on("disconnect", () => {
+      console.log("A user disconnected");
+    });
+});
+  
+
+function initRedisSubscribe() {
+    console.log("Subscribed to logs ...");
+    subscriber.psubscribe("logs:*");
+    subscriber.on("pmessage", (pattern, channel, message) => {
+      console.log(message);
+      io.to(channel).emit("message", message);
+    });
+}
+
+initRedisSubscribe();
+
+server.listen(PORT, () => {
+    console.log(`App is started to localhost : ${PORT}`);
+    console.log(`http://localhost:${PORT}`);
+});

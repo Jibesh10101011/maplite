@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Modal, View, Text, TouchableOpacity, StyleSheet, Button } from "react-native";
 import FormFeild from "./FormFeild";
 
 interface DialogProps {
@@ -12,6 +12,11 @@ interface DialogProps {
   }>;
   dismissOnTouchOutside?: boolean;
   onDismiss: () => void;
+  generateRoomId:()=>void;
+  roomId:string;
+  setRoomId:(value:string)=>void;
+  isCreating:{room:boolean,generating:boolean};
+  setIsCreating:(value:{room:boolean,generating:boolean})=>void;
 }
 
 const Dialog: React.FC<DialogProps> = ({
@@ -21,6 +26,11 @@ const Dialog: React.FC<DialogProps> = ({
   buttons,
   dismissOnTouchOutside = true,
   onDismiss,
+  roomId,
+  setRoomId,
+  generateRoomId,
+  isCreating,
+  setIsCreating
 }) => {
   const [form, setForm] = useState({
     email: "",
@@ -45,15 +55,16 @@ const Dialog: React.FC<DialogProps> = ({
             <Text style={styles.message}>Create Your Own</Text>
             <FormFeild
               title=""
-              value={form.password}
-              setValue={(e) => setForm({ ...form, password: e })}
+              value={roomId}
+              setValue={(e) => setRoomId(e)}
               otherStyles="mt-1" // Updated to use StyleSheet-like object
               // Added for password field
               placeholder="Room ID"
             />
             <View className="flex-row justify-end">
-                
-              <Text className="text-gray-50 mt-2">@generate</Text>
+              <TouchableOpacity onPress={generateRoomId}>
+                  <Text className="text-gray-50 mt-2">{ isCreating.generating ? "generating..." : "@generate"}</Text>
+              </TouchableOpacity>
             </View>
             {/* Buttons */}
             <View style={styles.buttonContainer}>
@@ -63,10 +74,10 @@ const Dialog: React.FC<DialogProps> = ({
                   style={styles.button}
                   onPress={() => {
                     button.onPress?.();
-                    onDismiss();
+                    if(button.text === "Cancel") onDismiss();
                   }}
                 >
-                  <Text style={styles.buttonText}>{button.text}</Text>
+                  <Text style={styles.buttonText}>{isCreating.room ? "Creating..." :  button.text}</Text>
                 </TouchableOpacity>
               ))}
             </View>

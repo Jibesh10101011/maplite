@@ -63,6 +63,20 @@ export async function getProtectedData() {
     }
 }
 
+
+export async function handleGenerateRoomId() {
+    try {
+        console.log("Handle Triggered");
+        const response = await axios.get(`${BACKEND_URL}/room/genId`);
+        console.log(response.data);
+        const {roomId} = response.data;
+        return roomId;
+    } catch(error) {
+        console.log(error)
+        return "Error Occured";
+    }
+}
+
 export async function handlCreateRoom() {
     try {
         const response = await axios.post("/room/create");

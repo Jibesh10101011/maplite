@@ -15,7 +15,7 @@ import CustomButton from "@/components/CustomButton";
 
 
 import { Link, router } from "expo-router";
-import { handleSignIn } from "@/lib/apiBackend";
+import { handleGenerateRoomId, handleSignIn } from "@/lib/apiBackend";
 import Dialog from "@/components/Dialog";
 
 const Create = () => {
@@ -26,6 +26,8 @@ const Create = () => {
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [roomId,setRoomId] = useState<string>("");
+  const [isCreating,setIsCreating] = useState({room:false,generating:false});
 
   const submit = async () => {
     try {
@@ -45,7 +47,19 @@ const Create = () => {
 
   const handleJoinRoom = async () => {};
 
-  const handleCreateRoom = async () => {};
+  const handleCreateRoom = async () => {
+      
+  };
+
+  const generateRoomId = async() => {
+    try {
+      const roomId = await handleGenerateRoomId();
+      setRoomId(roomId);
+    } catch(error) {
+      setRoomId("Error Occured");
+    }
+  }
+
 
   return (
     <SafeAreaView>
@@ -55,7 +69,7 @@ const Create = () => {
             <Image
               source={images.maplite}
               resizeMode="contain"
-              className="w-[150px] h-[150px]"
+              className="w-[150px] h-[150px] mt-10"
             />
           </View>
           <FormFeild
@@ -89,13 +103,19 @@ const Create = () => {
               buttons={[
                 {
                   text: "Cancel",
-                  onPress: () => console.log("Cancel pressed"),
+                  onPress: () => console.log("Room Creating canceled"),
                 },
                 {
                   text: "Create",
-                  onPress: () => console.log("OK pressed"),
+                  onPress: () => handleCreateRoom(),
                 },
               ]}
+
+              generateRoomId={generateRoomId}
+              roomId={roomId}
+              setRoomId={setRoomId}
+              isCreating={isCreating}
+              setIsCreating={setIsCreating}
             />
           </View>
         </View>
