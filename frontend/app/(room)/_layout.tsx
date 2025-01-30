@@ -23,7 +23,7 @@ const RoomLayout = () => {
 
 const styles = StyleSheet.create({
   text: {
-    color: 'gray',
+    color: 'white',
     textAlign: 'center',
     marginTop: 20,
   },

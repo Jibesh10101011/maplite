@@ -1,4 +1,4 @@
-import { validateToken } from "../services/authentication";
+const { validateToken } = require("../services/authentication");
 
 const User = require("../models/user");
 
@@ -42,12 +42,12 @@ async function handleSignIn(req,res) {
 function handleTokenValidation(req,res) {
     try {
         const token = req.headers.authorization?.split(" ")[1];
-        if (!token) return res.status(401).json({ success:false,message: "No token provided" });
+        if (!token) return res.status(401).json({ success:false,message: "No token provided"});
         const payload = validateToken(token);
         return res.status(200).json({success:true,user:payload});
     } catch(error) {
         console.log("During validation : ",error.message);
-        return res.status(200).json({success:false,message:error.message});
+        return res.status(401).json({success:false,message:error.message});
     }
 }
 

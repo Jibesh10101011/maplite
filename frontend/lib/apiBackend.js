@@ -48,13 +48,25 @@ export async function handleSignIn(email,password) {
 export async function getProtectedData() {
     try {
         const token = await AsyncStorage.getItem("token");
-        const response = await axios.get(`${BACKEND_URL}/auth/validate-token`,{
+        if (!token) throw new Error("No token found");
+
+        const response = await axios.get(`${BACKEND_URL}/auth/validate-token`, {
             headers: { Authorization: `Bearer ${token}` },
         });
-        console.log("Protected Data = ",response.data);
-        return response.data.user;
+
+        if (!response.data.success) throw new Error("Invalid token");
+
+        return response.data;
+    } catch (error) {
+        Alert.alert("Session expired", "Please log in again.");
+        throw error; // Let the caller handle redirection
+    }
+}
+
+export async function handlCreateRoom() {
+    try {
+        const response = await axios.post("/room/create");
     } catch(error) {
-        Alert.alert("Validation failed");
-        return ""
+
     }
 }

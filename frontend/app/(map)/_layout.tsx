@@ -1,9 +1,25 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { Stack } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { Stack,router } from 'expo-router';
+import { getProtectedData } from '@/lib/apiBackend';
 
 const MapLayout = () => {
+
+  const [user,setUser]=useState<any>();
+
+  useEffect(()=>{
+    const fetchUser = async () => {
+      try {
+        const userData = await getProtectedData();
+        console.log("User Data = ",userData);
+        setUser(userData.user);
+      } catch (error) {
+        router.replace("/(auth)/sign-in"); // Redirect on failure
+      }
+    };
+    fetchUser();
+  },[]);
   return (
     <View style={{ flex: 1 }}>
       {/* Stack should only contain Stack.Screen components for routing */}

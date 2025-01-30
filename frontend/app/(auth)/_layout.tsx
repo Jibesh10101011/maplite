@@ -1,9 +1,25 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { Stack } from 'expo-router';
+import React, { useEffect } from 'react';
+import { Stack,router } from 'expo-router';
+import { getProtectedData } from '@/lib/apiBackend';
 
 const AuthLayout = () => {
+
+    useEffect(()=>{
+      const fetchUser = async () => {
+        try {
+          const userData = await getProtectedData();
+          console.log("User Data = ",userData);
+          Alert.alert("User Already Signed In");
+          router.replace("/(tabs)");
+        } catch (error) {
+           // Redirect on failure
+        }
+      };
+      fetchUser();
+    },[]);
+
   return (
     <View style={{ flex: 1 }}>
       {/* Stack should only contain Stack.Screen components for routing */}
