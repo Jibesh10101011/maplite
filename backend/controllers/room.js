@@ -1,4 +1,6 @@
 const { v4:uuidv4 } = require('uuid');
+const Room = require("../models/room");
+const { validateToken } = require('../services/authentication');
 
 const handleGenerateRoomId = (req,res) => {
     try {
@@ -13,10 +15,27 @@ const handleGenerateRoomId = (req,res) => {
 
 const handleCreateRoom = async (req,res) => {
     try {
+        const {token,roomId} = req.body;
+        const payload = validateToken(token);
 
+        console.log("Post Request Received");
+        console.log(payload);
+        await Room.create({roomId,user:payload.id});
+        return res.json({success:true,message:"Room Created Successfully"});
     } catch(error) {
-
+        return res.json({success:false,message:error.message});
     }
 };
 
-module.exports = { handleGenerateRoomId, handleCreateRoom };
+const handleValidateRoom = async (req,res) => {
+    try {
+        const { roomId } = req.body;
+        const room = await Room.findOne({roomId});
+        if(room) return res.status(200).json({success:true});
+        else return res.status(401).json({success:false});
+    } catch(error) {
+        return res.status(400).json({success:false});
+    }
+}
+
+module.exports = { handleGenerateRoomId, handleCreateRoom, handleValidateRoom };
