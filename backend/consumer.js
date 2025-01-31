@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { kafka } = require("./client");
+const { kafka } = require("./clientKafka");
 const { kafkaMessages } = require("./cache");
 const consumer = kafka.consumer({ groupId:process.env.GROUP_ID });
 

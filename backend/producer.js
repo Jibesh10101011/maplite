@@ -1,4 +1,4 @@
-const { kafka } = require("./client");
+const { kafka } = require("./clientKafka");
 const producer = kafka.producer();
 
 (async () => {

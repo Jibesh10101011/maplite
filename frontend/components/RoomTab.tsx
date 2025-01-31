@@ -13,16 +13,22 @@ import { BACKEND_URL } from "@env";
 import { FC, useEffect, useState } from "react";
 interface RoomTabProps {
     roomId:string;
+    sender:string;
 }
 
 const socket = io(BACKEND_URL);
-const RoomTab:FC<RoomTabProps> = ({ roomId }) => {
-
+const RoomTab:FC<RoomTabProps> = ({ roomId,sender }) => {
+    
     const [message, setMessage] = useState("");
-    const [messages, setMessages] = useState<string[]>([]);
+    const [messages, setMessages] = useState<any[]>([]);
 
     useEffect(() => {
         socket.emit("subscribe", roomId);
+
+        socket.on('previous_messages',(messages)=>{
+            setMessages((prevMessages) => [...prevMessages,...messages]);
+        });
+
         socket.on("chat_message", (newMessage) => {
             setMessages((prevMessages) => [...prevMessages, newMessage]);
         });
@@ -32,7 +38,7 @@ const RoomTab:FC<RoomTabProps> = ({ roomId }) => {
     }, []);
     const sendMessage = () => {
         if (message.trim()) {
-            socket.emit("send_message", { channel: roomId, message });
+            socket.emit("send_message", { roomId, sender, message });
             setMessage("");
         }
     };
@@ -43,7 +49,7 @@ const RoomTab:FC<RoomTabProps> = ({ roomId }) => {
                 data={messages}
                 renderItem={({ item }) => (
                 <View style={styles.messageContainer}>
-                    <Text style={styles.messageText}>{item}</Text>
+                    <Text style={styles.messageText}>{item.message}</Text>
                 </View>
                 )}
                 keyExtractor={(item, index) => index.toString()}

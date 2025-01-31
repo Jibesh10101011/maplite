@@ -101,8 +101,15 @@ ipconfig
 
 2. And also update `backend/.env` here `BROKERS_CONNECTING_IP="192.168.0.101:9092` simply update `192.168.0.101` to the same `<IpV4 Address>`
 
+## Step-9 : Start Redis Server
+1. Run the command 
+    ```bash
+    docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
+    ```
 
-## Step-9 : Start the backend Server
+    
+
+## Step-10 : Start the backend Server
 Run the command
 ```bash
 npm start
