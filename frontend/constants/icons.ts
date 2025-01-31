@@ -11,7 +11,7 @@ import logout from "../assets/icons/logout.png";
 import eyeHide from "../assets/icons/eye-hide.png";
 import eye from "../assets/icons/eye.png";
 import play from "../assets/icons/play.png";
-
+import mapIcon from "../assets/icons/mapIcon.png";
 
 
 export const Icons:any = {
@@ -28,4 +28,5 @@ export const Icons:any = {
   logout,
   eyeHide,
   eye,
+  mapIcon
 };

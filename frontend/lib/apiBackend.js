@@ -77,10 +77,42 @@ export async function handleGenerateRoomId() {
     }
 }
 
-export async function handlCreateRoom() {
+export async function handleCreateRoom(roomId) {
     try {
-        const response = await axios.post("/room/create");
-    } catch(error) {
+        const token = await AsyncStorage.getItem("token");
 
+        console.log("Handle Create Room Triggered : ",token);
+        console.log(roomId);
+
+        if(!token) {
+            Alert.alert("Need to Authorized");
+            return router.push(`/(auth)/sign-in`);
+        }
+
+        if(!roomId && !roomId.length) {
+            Alert.alert("Create a Valid Room ID");
+            return router.push(`/(tabs)/create`);
+        }
+
+        const response = await axios.post(`${BACKEND_URL}/room/create`,{ token, roomId });
+        const { success } = response.data;
+        return success;
+
+    } catch(error) {
+        console.log(error.message);
+        Alert.alert("Some Problem Occured!");
+        throw error;
+    }
+}
+
+
+export async function handleValidateRoomAndJoin(roomId) {
+    try {
+        const response = await axios.post(`${BACKEND_URL}/room/validate`,{ roomId });
+        const { success } = response.data;
+        return success;
+    } catch(error) {
+        Alert.alert("Some error occured!");
+        throw error;
     }
 }

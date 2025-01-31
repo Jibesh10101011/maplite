@@ -1,12 +1,10 @@
 import {
   ScrollView,
   StyleSheet,
-  Text,
   View,
   SafeAreaView,
   Image,
   Alert,
-  Button,
 } from "react-native";
 import React, { useState } from "react";
 import { images } from "../../constants/Images";
@@ -14,47 +12,39 @@ import FormFeild from "@/components/FormFeild";
 import CustomButton from "@/components/CustomButton";
 
 
-import { Link, router } from "expo-router";
-import { handleGenerateRoomId, handleSignIn } from "@/lib/apiBackend";
+import { router } from "expo-router";
+import { handleCreateRoom, handleGenerateRoomId, handleSignIn, handleValidateRoomAndJoin } from "@/lib/apiBackend";
 import Dialog from "@/components/Dialog";
 
 
 const Create = () => {
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
+  
 
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isJoining, setIsJoining] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [roomId,setRoomId] = useState<string>("");
   const [isCreating,setIsCreating] = useState({room:false,generating:false});
 
 
-  const submit = async () => {
+  
+
+  const handleJoinRoom = async() => {
     try {
-      setIsSubmitting(true);
-      if (!form.email.length && !form.password.length) {
-        Alert.alert("Fill all the Input Field correctly");
-        return;
-      }
-      await handleSignIn(form.email, form.password);
-    } catch (error) {
-      setIsSubmitting(false);
-      Alert.alert("Error during SignIn");
-    } finally {
-      setIsSubmitting(false);
+      setIsJoining(true);
+      const success = await handleValidateRoomAndJoin(roomId);
+      setIsJoining(false);
+      if(success) 
+        return router.push(`/room/${roomId}`);
+      else 
+        return router.push(`/(tabs)/create`);
+    } catch(error) {
+      setIsJoining(false);
+      Alert.alert("Invalid Room ID");
+      return router.push("/(tabs)/create");
     }
   };
 
-  const handleJoinRoom = () => {
-    console.log("Room ID = ",roomId);
-    router.push(`/room/${roomId}`);
-  };
-
-  const handleCreateRoom = () => {
-      router.push(`/room/${roomId}`);
-  };
+  
 
   const generateRoomId = async() => {
     try {
@@ -63,6 +53,23 @@ const Create = () => {
     } catch(error) {
       setRoomId("Error Occured");
     }
+  }
+
+  const createRoom = async()=>{
+    try {
+      setIsCreating({...isCreating,room:true});
+      const success = await handleCreateRoom(roomId);
+      console.log("Success = ",success);
+      setIsCreating({...isCreating,room:false});
+      if(success) 
+        return router.push(`/room/${roomId}`);
+      else 
+        return router.push('/(tabs)/create');
+    } catch(error) {
+      setIsCreating({...isCreating,room:false});
+      Alert.alert("Something Went Wrong!");
+      return router.push('/(tabs)/create');
+    } 
   }
 
 
@@ -89,13 +96,13 @@ const Create = () => {
             title="Join Room"
             handlePress={handleJoinRoom}
             containerStyles="mt-7"
-            isLoading={isSubmitting}
+            isLoading={isJoining}
           />
           <CustomButton
             title="Create Room"
             handlePress={() => setShowDialog(true)}
             containerStyles="mt-7"
-            isLoading={isSubmitting}
+            isLoading={false}
           />
           <View
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
@@ -112,7 +119,7 @@ const Create = () => {
                 },
                 {
                   text: "Create",
-                  onPress: () => handleCreateRoom(),
+                  onPress: () => createRoom(),
                 },
               ]}
 
