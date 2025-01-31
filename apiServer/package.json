@@ -1,19 +1,26 @@
 {
   "name": "apiserver",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Jibesh10101011/maplite.git"
   },
-  "author": "",
+  "author": "WizardDutta,dekaustav,Jibesh10101011",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Jibesh10101011/maplite/issues"
   },
   "homepage": "https://github.com/Jibesh10101011/maplite#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
 }
