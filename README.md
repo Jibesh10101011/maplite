@@ -20,7 +20,6 @@ git clone REPO_URL
 ```
 
 ### Step-2 : Navigate to root directory
-
 ```bash
 cd frontend
 ```
@@ -46,7 +45,7 @@ npm install
 
 ### Step-5 : Run the application
 ```bash
-npx expo start --tunnel
+npx expo start
 ```
 
 ### Step-6 : Open the App on your phone and Scan the QR
@@ -111,6 +110,20 @@ ipconfig
 
 ## Step-10 : Start the backend Server
 Run the command
+```bash
+npm start
+```
+
+# API SERVER SETUP
+
+```bash
+cd apiServer
+```
+Download Neccessary modules
+```bash
+npm install
+```
+Start Server
 ```bash
 npm start
 ```
