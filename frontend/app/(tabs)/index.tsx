@@ -7,6 +7,7 @@ import { Link, Redirect,router } from 'expo-router';
 
 
 import '../../global.css';
+import { handleSignOut } from '@/lib/apiBackend';
 
 export default function HomeScreen() {
   return (
@@ -46,11 +47,16 @@ export default function HomeScreen() {
                 />
                 <StatusBar backgroundColor='#161622' style='light' />
             </View> */}
-             <View className='flex justify-center items-center mt-5'>
+             <View className='flex justify-around flex-row w-80 items-center mt-5'>
                 <CustomButton
                     title='Test Map'
                     handlePress={()=>router.push("/(map)/map-kafka")}
-                    containerStyles='w-full mb-2'  
+                    containerStyles='mb-2'  
+                />
+                <CustomButton
+                    title='Sign Out'
+                    handlePress={handleSignOut}
+                    containerStyles='mb-2'  
                 />
                 <StatusBar backgroundColor='#161622' style='light' />
             </View>

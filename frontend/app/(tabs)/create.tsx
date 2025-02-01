@@ -6,14 +6,14 @@ import {
   Image,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { images } from "../../constants/Images";
 import FormFeild from "@/components/FormFeild";
 import CustomButton from "@/components/CustomButton";
 
 
 import { router } from "expo-router";
-import { handleCreateRoom, handleGenerateRoomId, handleSignIn, handleValidateRoomAndJoin } from "@/lib/apiBackend";
+import { getProtectedData, handleCreateRoom, handleGenerateRoomId, handleSignIn, handleValidateRoomAndJoin } from "@/lib/apiBackend";
 import Dialog from "@/components/Dialog";
 
 
@@ -24,8 +24,6 @@ const Create = () => {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [roomId,setRoomId] = useState<string>("");
   const [isCreating,setIsCreating] = useState({room:false,generating:false});
-
-
   
 
   const handleJoinRoom = async() => {
@@ -72,6 +70,17 @@ const Create = () => {
     } 
   }
 
+  useEffect(()=>{
+    const fetchUser = async () => {
+      try {
+        const userData = await getProtectedData();
+        console.log("User Data = ",userData);
+      } catch (error) {
+        router.replace("/(auth)/sign-in"); // Redirect on failure
+      }
+    };
+    fetchUser();
+  },[]);
 
   return (
     <SafeAreaView>
