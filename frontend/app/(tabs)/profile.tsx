@@ -1,6 +1,9 @@
 import { FlatList, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
-import React from 'react';
+import React,{useEffect} from 'react';
 import Room from '@/components/Room';
+import { getProtectedData } from '@/lib/apiBackend';
+import { router } from 'expo-router';
+import SearchInput from '@/components/SearchInput';
 
 const Profile = () => {
   const rooms = ["134e5", "34dejd", "er3423", "12wkww", "23ekdkd","34dejd", "er3423","23ekdkd","34dejd", "er3423", "12wkww","34dejd", "er3423", "12wkww","34dejd", "er3423", "12wkww","12wkww"];
@@ -10,9 +13,24 @@ const Profile = () => {
   const itemWidth = 120; 
   const numColumns = Math.max(1, Math.floor(width / itemWidth));
 
+   useEffect(()=>{
+      const fetchUser = async () => {
+        try {
+          const userData = await getProtectedData();
+          console.log("User Data = ",userData);
+        } catch (error) {
+          router.replace("/(auth)/sign-in"); // Redirect on failure
+        }
+      };
+      fetchUser();
+    },[]);
+
   return (
     <View style={styles.container}>
-      <Text className='text-gray-100 text-3xl bg-gray-900 m-2 p-4 rounded-lg'>Rooms</Text>
+      <View className='flex flex-row justify-between items-center border-b border-gray-300 my-1'>
+        <Text className='text-gray-100 text-3xl m-2 p-2 rounded-lg'>Rooms</Text>
+        <SearchInput/>
+      </View>
       <FlatList
         data={rooms}
         renderItem={({ item }) => (

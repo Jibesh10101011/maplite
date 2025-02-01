@@ -53,12 +53,14 @@ const SignIn = () => {
             setValue={(e)=>setForm({...form,email:e})}
             otherStyles='mt-7'
             keyboardType='email-address'
+            placeholder='email'
           />
           <FormFeild
             title='Password'
             value={form.password}
             setValue={(e)=>setForm({...form,password:e})}
             otherStyles='mt-7'
+            placeholder='password'
           />
           <CustomButton
             title="Sign In"

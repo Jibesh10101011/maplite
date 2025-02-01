@@ -116,3 +116,17 @@ export async function handleValidateRoomAndJoin(roomId) {
         throw error;
     }
 }
+
+export async function handleSignOut() {
+    try {
+        console.log("Handle Sign Out Clicked!");
+        const token = await AsyncStorage.getItem("token");
+        if(token) {
+            await AsyncStorage.removeItem("token");
+        }
+        return router.push("/(auth)/sign-in");
+    } catch(error) {
+        Alert.alert("Some Problem Occured!");
+        return router.push("/(tabs)");
+    }
+}

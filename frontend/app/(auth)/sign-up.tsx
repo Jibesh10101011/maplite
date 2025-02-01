@@ -54,6 +54,7 @@ const SignUp = () => {
             setValue={(e)=>setForm({...form,username:e})}
             otherStyles='mt-7'
             keyboardType='username'
+            placeholder='usename'
           />
           <FormFeild
             title='Email'
@@ -61,12 +62,14 @@ const SignUp = () => {
             setValue={(e)=>setForm({...form,email:e})}
             otherStyles='mt-7'
             keyboardType='email-address'
+            placeholder='email'
           />
           <FormFeild
             title='Password'
             value={form.password}
             setValue={(e)=>setForm({...form,password:e})}
             otherStyles='mt-7'
+            placeholder='password'
           />
           <CustomButton
             title="Sign Up"
