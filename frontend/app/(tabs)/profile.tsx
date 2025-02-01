@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
-import React,{useEffect} from 'react';
+import React,{useEffect, useState} from 'react';
 import Room from '@/components/Room';
 import { getProtectedData } from '@/lib/apiBackend';
 import { router } from 'expo-router';
@@ -7,11 +7,31 @@ import SearchInput from '@/components/SearchInput';
 
 const Profile = () => {
   const rooms = ["134e5", "34dejd", "er3423", "12wkww", "23ekdkd","34dejd", "er3423","23ekdkd","34dejd", "er3423", "12wkww","34dejd", "er3423", "12wkww","34dejd", "er3423", "12wkww","12wkww"];
+  const [ searchRooms,setSearchedRooms ] = useState<string[]>(rooms);
   const { width } = useWindowDimensions();
-  
+  const [ roomId,setRoomId ] = useState<string>("");
+
   // Define minimum width per item
   const itemWidth = 120; 
   const numColumns = Math.max(1, Math.floor(width / itemWidth));
+
+  function handleSearchRoom(e:string) {
+    let testRooms:string[] = [];
+
+    console.log("Triggered");
+    console.log("Room ID = ",e);
+
+    if(e === "") {
+      setSearchedRooms(rooms);
+      return;
+    } else {
+      rooms.forEach((ele)=>{
+        if(ele.includes(e)) testRooms.push(ele);
+      });
+      console.log("Searched Rooms = ",searchRooms);
+      setSearchedRooms(testRooms)
+    }
+  }
 
    useEffect(()=>{
       const fetchUser = async () => {
@@ -27,12 +47,16 @@ const Profile = () => {
 
   return (
     <View style={styles.container}>
-      <View className='flex flex-row justify-between items-center border-b border-gray-300 my-1'>
+      <View className='flex flex-row justify-between items-center border-b border-gray-400 my-1'>
         <Text className='text-gray-100 text-3xl m-2 p-2 rounded-lg'>Rooms</Text>
-        <SearchInput/>
+        <SearchInput
+          roomId={roomId}
+          setRoomId={setRoomId}
+          handleSearchRoom={handleSearchRoom}
+        />
       </View>
       <FlatList
-        data={rooms}
+        data={searchRooms}
         renderItem={({ item }) => (
           <View style={[styles.roomContainer, { width: width / numColumns - 10 }]}>
             <Room roomId={item} />
