@@ -1,13 +1,9 @@
 import {
-//   ScrollView,
-//   FlatList,
   View,
-//   Text,
-//   TextInput,
-//   Button,
   StyleSheet,
+  Alert,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import RoomTab from "@/components/RoomTab";
 import { useEffect, useState } from "react";
 import { getProtectedData } from "@/lib/apiBackend";
@@ -20,10 +16,15 @@ const Room = () => {
 
   useEffect(()=>{
     async function getData() {
-      const userData = await getProtectedData();
-      console.log(userData);
-      const { id,name,email } = userData.user;
-      setUser(name);
+      try {
+        const userData = await getProtectedData();
+        console.log(userData);
+        const { id,name,email } = userData.user;
+        setUser(name);
+      } catch(error) {
+        Alert.alert("Invalid User","Need to Sign In");
+        router.push("/(auth)/sign-in");
+      }
     }
 
     getData();

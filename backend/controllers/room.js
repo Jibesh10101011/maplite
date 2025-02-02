@@ -22,7 +22,6 @@ const handleCreateRoom = async (req,res) => {
         await Room.create({roomId,user:payload.id});
         return res.json({success:true,message:"Room Created Successfully"});
     } catch(error) {
-        console.log(" Error in handleCreateRoom  ",error)
         return res.json({success:false,message:error.message});
     }
 };

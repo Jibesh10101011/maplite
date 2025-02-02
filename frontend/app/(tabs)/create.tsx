@@ -59,10 +59,12 @@ const Create = () => {
       const success = await handleCreateRoom(roomId);
       console.log("Success = ",success);
       setIsCreating({...isCreating,room:false});
-      if(success) 
+      if(success) {
         return router.push(`/room/${roomId}`);
-      else 
+      } else {
+        Alert.alert("This Room ID already used by someone","Create a different Room ID");
         return router.push('/(tabs)/create');
+      }
     } catch(error) {
       setIsCreating({...isCreating,room:false});
       Alert.alert("Something Went Wrong!");
