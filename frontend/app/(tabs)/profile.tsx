@@ -55,6 +55,7 @@ const Profile = () => {
     useEffect(() => {
       const getRoomData = async () => {
         try {
+          if (!userId) return;
           setIsLoading(true);
           const allRooms = await getAllRooms(userId);
           setIsLoading(false);
@@ -66,10 +67,10 @@ const Profile = () => {
         }
       };
   
-      if (isFocused) {
+      if (isFocused && userId) {
         getRoomData(); // Refetch data when screen is focused
       }
-    }, [isFocused]); // Runs whenever `isFocused` changes
+    }, [isFocused,userId]); // Runs whenever `isFocused` changes
   
 
   return (
