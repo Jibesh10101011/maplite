@@ -4,6 +4,7 @@ const roomSchema = new Schema({
     roomId:{
         type:String,
         required:true,
+        unique:true
     },
     user:{
         type:Schema.Types.ObjectId,

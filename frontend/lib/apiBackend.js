@@ -130,3 +130,24 @@ export async function handleSignOut() {
         return router.push("/(tabs)");
     }
 }
+
+
+export async function getAllRooms(userId) {
+    try {
+
+        if(userId) {
+            console.log("User ID = ",userId);
+        const response = await axios.get(`${BACKEND_URL}/room/all`,{
+            headers: { userId },
+        });
+        const { rooms } = response.data;
+        return rooms;
+        } else {
+            Alert.alert("Invalid UserId");
+            return [];
+        } 
+    } catch(error) {
+        Alert.alert("Some Problem Occured!");
+        throw error;
+    }
+}

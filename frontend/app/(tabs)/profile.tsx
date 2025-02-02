@@ -1,15 +1,21 @@
 import { FlatList, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import React,{useEffect, useState} from 'react';
 import Room from '@/components/Room';
-import { getProtectedData } from '@/lib/apiBackend';
-import { router } from 'expo-router';
+import { getAllRooms, getProtectedData } from '@/lib/apiBackend';
+import { Link, router } from 'expo-router';
 import SearchInput from '@/components/SearchInput';
+import { useIsFocused } from "@react-navigation/native";
+
 
 const Profile = () => {
-  const rooms = ["134e5", "34dejd", "er3423", "12wkww", "23ekdkd","34dejd", "er3423","23ekdkd","34dejd", "er3423", "12wkww","34dejd", "er3423", "12wkww","34dejd", "er3423", "12wkww","12wkww"];
+  const [ rooms,setRooms ] = useState<string[]>([]);
+  const [ isLoading,setIsLoading ] = useState<boolean>(false);
   const [ searchRooms,setSearchedRooms ] = useState<string[]>(rooms);
   const { width } = useWindowDimensions();
   const [ roomId,setRoomId ] = useState<string>("");
+  const [ userId,setUserId ] = useState<string>("");
+  const isFocused = useIsFocused(); 
+  
 
   // Define minimum width per item
   const itemWidth = 120; 
@@ -37,13 +43,34 @@ const Profile = () => {
       const fetchUser = async () => {
         try {
           const userData = await getProtectedData();
-          console.log("User Data = ",userData);
+          setUserId(userData.user.id);
+          console.log("User Data = ",userData.user.id);
         } catch (error) {
           router.replace("/(auth)/sign-in"); // Redirect on failure
         }
       };
-      fetchUser();
+      fetchUser()
     },[]);
+
+    useEffect(() => {
+      const getRoomData = async () => {
+        try {
+          setIsLoading(true);
+          const allRooms = await getAllRooms(userId);
+          setIsLoading(false);
+          console.log("All Rooms  = ", allRooms);
+          setSearchedRooms(allRooms);
+          setRooms(allRooms);
+        } catch (error) {
+          router.push("/(tabs)");
+        }
+      };
+  
+      if (isFocused) {
+        getRoomData(); // Refetch data when screen is focused
+      }
+    }, [isFocused]); // Runs whenever `isFocused` changes
+  
 
   return (
     <View style={styles.container}>
@@ -55,6 +82,9 @@ const Profile = () => {
           handleSearchRoom={handleSearchRoom}
         />
       </View>
+      {isLoading ? <Text className='text-3xl text-white mt-20 mx-auto'>loading ... </Text> :
+      
+      searchRooms.length ? 
       <FlatList
         data={searchRooms}
         renderItem={({ item }) => (
@@ -66,7 +96,13 @@ const Profile = () => {
         keyExtractor={(item, index) => index.toString()}
         numColumns={numColumns}
         contentContainerStyle={styles.listContainer}
-      />
+      /> : 
+      <View> 
+        <Text className='text-3xl text-white mt-20 mx-auto'>No Room Created !</Text> 
+        <Link href="/(tabs)/create" className='text-blue-600 text-2xl underline mx-auto'>Create Room</Link>
+        
+      </View>
+      }
     </View>
   );
 };

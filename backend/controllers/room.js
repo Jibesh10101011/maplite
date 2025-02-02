@@ -17,12 +17,12 @@ const handleCreateRoom = async (req,res) => {
     try {
         const {token,roomId} = req.body;
         const payload = validateToken(token);
-
         console.log("Post Request Received");
         console.log(payload);
         await Room.create({roomId,user:payload.id});
         return res.json({success:true,message:"Room Created Successfully"});
     } catch(error) {
+        console.log(" Error in handleCreateRoom  ",error)
         return res.json({success:false,message:error.message});
     }
 };
@@ -38,4 +38,15 @@ const handleValidateRoom = async (req,res) => {
     }
 }
 
-module.exports = { handleGenerateRoomId, handleCreateRoom, handleValidateRoom };
+const getAllRooms = async (req,res) => {
+    try {
+        const userId = req.headers.userid;
+        const rooms = await Room.find({user:userId});
+        return res.status(200).json({rooms:rooms.map((ele)=>ele.roomId)});
+    } catch(error) {
+        console.log("Error while getRoom : ",error.message)
+        return res.status(401).json({success:false,rooms:[]});
+    }
+}
+
+module.exports = { handleGenerateRoomId, handleCreateRoom, handleValidateRoom, getAllRooms };
