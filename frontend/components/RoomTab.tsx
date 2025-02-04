@@ -29,6 +29,8 @@ const RoomTab: FC<RoomTabProps> = ({ roomId, sender }) => {
   const [inputHeight, setInputHeight] = useState(56); // Initial height
   const flatListRef = useRef<FlatList>(null);
 
+
+
   useEffect(() => {
     socket.emit("subscribe", roomId);
 
@@ -37,6 +39,7 @@ const RoomTab: FC<RoomTabProps> = ({ roomId, sender }) => {
     });
 
     socket.on("chat_message", (newMessage) => {
+      console.log("New Messages = ",newMessage);
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
@@ -127,15 +130,18 @@ const RoomTab: FC<RoomTabProps> = ({ roomId, sender }) => {
         renderItem={({ item, index }) => (
           <View
             className={`max-w-[80%] p-3 my-1 rounded-lg ${
-              index % 2 === 0
-                ? "bg-gray-100 self-start rounded-tl-none"
-                : "bg-green-100 self-end rounded-tr-none"
+              item.sender === sender
+                ?"bg-green-100 self-end rounded-tr-none"
+                : "bg-gray-100 self-start rounded-tl-none"
             }`}
           >
             {item.message && (
-              <Text className={`text-base ${index % 2 === 0 ? "text-gray-800" : "text-gray-800"}`}>
-                {item.message}
-              </Text>
+              <View className="flex flex-col justify-between">
+                <Text className="text-blue-800">~{item.sender}</Text>
+                <Text className={`text-base ${index % 2 === 0 ? "text-gray-800" : "text-gray-800"}`}>
+                  {item.message}
+                </Text>
+              </View>
             )}
             {item.file && (
               <Image source={{ uri: item.file }} className="w-40 h-40 mt-2 rounded-lg" />
