@@ -94,7 +94,8 @@ ipconfig
 ```
 
 ## Step-7 : Copy the circled IpV4 Address and replace with `<IpV4 Address>`
-  ![WhatsApp Image 2025-01-23 at 16 35 49_96ce5453](https://github.com/user-attachments/assets/17fcd743-1699-4ea8-8786-3b9db6506c82)
+
+![image](https://github.com/user-attachments/assets/241febc5-572b-488c-9a38-77e3bd0cb8d8)
 
 
 ## Step-8 : Start confluentinc/cp-kafka
