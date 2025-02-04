@@ -1,7 +1,7 @@
 # Contribution Guidelines 
   1. Create a Fork first
      
-     ![WhatsApp Image 2025-01-23 at 00 05 24_7b02ce10](https://github.com/user-attachments/assets/b94560b6-0436-48e9-a493-64a77281e172)
+![WhatsApp Image 2025-02-04 at 11 48 45_525e1371](https://github.com/user-attachments/assets/f216e854-db60-4e13-ac9c-efdda0549e6f)
 
   2. Create a Issue and then do a PR
 
@@ -29,9 +29,12 @@ cd frontend
     ```bash
     ipconfig
     ```
-2. Copy IpV4 Addesss from this ![WhatsApp Image 2025-01-23 at 16 35 49_96ce5453](https://github.com/user-attachments/assets/17fcd743-1699-4ea8-8786-3b9db6506c82)
+2. Copy IpV4 Addesss from this
+   
+![WhatsApp Image 2025-02-04 at 11 49 56_8b1cbf5f](https://github.com/user-attachments/assets/755bfac4-c457-40b6-a070-4ae4dc4026d2)
 
-3. Move to `frontend/.env` and here `BROKERS_CONNECTING_IP="<Ipv4Address>:9092"` replace
+
+4. Move to `frontend/.env` and here `BROKERS_CONNECTING_IP="<Ipv4Address>:9092"` replace
 this `<Ipv4 Address>` to the `Copied Ipv4 Address`
 
 
@@ -49,7 +52,9 @@ npx expo start
 ```
 
 ### Step-6 : Open the App on your phone and Scan the QR
-![image](https://github.com/user-attachments/assets/da640a5d-6815-40a0-a917-052687bfed87)
+
+![image](https://github.com/user-attachments/assets/98fd243c-4bcb-4027-bb42-b69b98971236)
+
 
 ### Neccessary Interrupts For realoading the Application and closing
 
