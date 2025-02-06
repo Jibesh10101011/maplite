@@ -4,9 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from '../../constants/Images';
 import CustomButton from '@/components/CustomButton';
 import { Link, Redirect,router } from 'expo-router';
-
-
-import '../../global.css';
 import { handleSignOut } from '@/lib/apiBackend';
 
 export default function HomeScreen() {
@@ -14,6 +11,7 @@ export default function HomeScreen() {
     <SafeAreaView className='bg-primary h-full'>
       <ScrollView contentContainerStyle={{height:"100%",overflow:"scroll"}}>
         <View className='w-full justify-center items-center min-h-[85vh] px-4'>
+          <Text className='text-4xl' style={{color:"white"}}>Hii I am Jibesh</Text>
             <Image
               source={images.maplite}
               className='w-[200px] h-[200px]'
