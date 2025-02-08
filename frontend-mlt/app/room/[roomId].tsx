@@ -7,6 +7,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import RoomTab from "@/components/RoomTab";
 import { useEffect, useState } from "react";
 import { getProtectedData } from "@/lib/apiBackend";
+import MapRoom from "@/components/MapRoom";
 
 const Room = () => {
   
@@ -33,6 +34,7 @@ const Room = () => {
 
   return (
     <View style={styles.container}>
+        <MapRoom/>
         { roomId && typeof(roomId) === "string" && <RoomTab sender={user} roomId={roomId} /> }
     </View>
   );
@@ -41,6 +43,8 @@ const Room = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection:"column",
+    justifyContent:"space-between",
     padding: 10,
     color: "#fff",
   },
