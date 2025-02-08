@@ -1,13 +1,8 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Text, Image, Platform, View , StyleSheet } from 'react-native';
+import { Text, Image, View } from 'react-native';
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-
 import { Icons } from '../../constants/icons';
 
 interface TabIconProps {
@@ -35,7 +30,6 @@ const TabIcon = ({icon,color,name,focused} : TabIconProps ) => {
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
 
   return (
     <Tabs
