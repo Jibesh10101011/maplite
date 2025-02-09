@@ -1,3 +1,4 @@
 let kafkaMessages = [];
+let kafkaCahce = {}
 
-module.exports = {kafkaMessages};
+module.exports = {kafkaMessages,kafkaCahce};

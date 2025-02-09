@@ -6,13 +6,17 @@ import {
     TouchableOpacity,
     Dimensions,
   } from "react-native";
-  import React, { useEffect, useState, useRef } from "react";
+  import React, { useEffect, useState, useRef, FC } from "react";
   import { SafeAreaView } from "react-native-safe-area-context";
   import MapView, { Marker, Polyline } from "react-native-maps";
   import * as Location from "expo-location";
   import axios from "axios"; // For REST API communication
   const BACKEND_URL = "http://192.168.0.101:3000";
   
+  interface MapRoomProps {
+    roomId:string;
+    username : string;
+  };
   
   interface OthersLocationType {
     username: string;
@@ -26,15 +30,17 @@ import {
   // const BACKEND_URL = "http://192.168.0.101:3000/api"; // Replace with your backend URL
   const { width, height } = Dimensions.get("window");
   
-  const MapRoom = () => {
+  const MapRoom:FC<MapRoomProps> = ( { roomId,username } ) => {
     const [errorMsg, setErrorMsg] = useState<string>("");
     const [kafkaMessage, setKafkaMessage] = useState<OthersLocationType[]>([]); // Kafka messages as an array of user locations
     const mapRef = useRef<any>(null);
     const [path, setPath] = useState<any[]>([]);
     const [usersPath, setUsersPath] = useState<UserLocations>({});
     const [location, setLocation] = useState<any>(null);
-  
-    console.log("Bakend URL = ",BACKEND_URL);
+    
+    console.log("Room Id = ",roomId);
+    console.log("User name = ",username);
+    // console.log("Bakend URL = ",BACKEND_URL);
   
     const [mapRegion, setMapRegion] = useState({
       latitude: 37.78825,
@@ -101,10 +107,12 @@ import {
             // Send the location data to the Kafka backend
             try {
               const response = await axios.post(`${BACKEND_URL}/api/send-location`, {
+                roomId,
+                username,
                 latitude,
                 longitude,
               });
-              console.log("Response = ", response.data);
+              // console.log("Response = ", response.data);
             } catch (err) {
               console.error("Error sending location to Kafka:", err);
             }
@@ -127,20 +135,48 @@ import {
   
       const fetchKafkaMessages = async () => {
         try {
-          const response = await axios.get(`${BACKEND_URL}/api/get-kafka-messages`);
-          console.log("Response Data = ", response.data);
-          if (response.data.success && Array.isArray(response.data.message)) {
-            // Create a new object to hold the updated paths
-            const updatedUsersPath: UserLocations = { ...usersPath };
-            response.data.message.forEach((user: OthersLocationType) => {
-              if (!updatedUsersPath.hasOwnProperty(user.username)) {
-                updatedUsersPath[user.username] = [];
-              }
-              updatedUsersPath[user.username].push({
-                latitude: user.latitude,
-                longitude: user.longitude,
-              });
-            });
+
+          if(!roomId) return;
+
+          const response = await axios.get(`${BACKEND_URL}/api/get-kafka-messages/${roomId}`);
+          // console.log("Response Data = ", response.data);
+              if (response.data.success && Array.isArray(response.data.messageCache)) {
+                // Create a new object to hold the updated paths
+                const updatedUsersPath: UserLocations = { ...usersPath };
+                // response.data.message.forEach((user: OthersLocationType) => {
+                //   if (!updatedUsersPath.hasOwnProperty(user.username)) {
+                //     updatedUsersPath[user.username] = [];
+                //   }
+                //   updatedUsersPath[user.username].push({
+                //     latitude: user.latitude,
+                //     longitude: user.longitude,
+                //   });
+                // }
+
+
+                // response.data.messageCache.forEach((user: OthersLocationType) => {
+                //     if (!updatedUsersPath.hasOwnProperty(user.username)) {
+                //       updatedUsersPath[user.username] = [];
+                //     }
+                //     updatedUsersPath[user.username].push({
+                //       latitude: user.latitude,
+                //       longitude: user.longitude,
+                //     });
+                // });
+
+                Object.keys(response.data.messageCache).forEach((username) => { 
+                  if (!updatedUsersPath.hasOwnProperty(username)) {
+                    updatedUsersPath[username] = [];
+                  }
+                  
+                  response.data.messageCache[username].forEach((location:any) => {
+                    updatedUsersPath[username].push({
+                      latitude: location.latitude,
+                      longitude: location.longitude,
+                    });
+                  });
+                });
+                
       
             // Use setUsersPath to update the state correctly
             setUsersPath((prevUsersPath) => {
@@ -152,7 +188,7 @@ import {
                   mergedPaths[username] = [...updatedUsersPath[username]];
                 }
               }
-              console.log("Updated Users Location = ", mergedPaths);
+              // console.log("Updated Users Location = ", mergedPaths);
               return mergedPaths;
             });
       

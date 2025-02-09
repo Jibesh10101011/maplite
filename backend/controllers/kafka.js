@@ -1,16 +1,20 @@
-const { kafkaMessages } = require("../cache");
+const { kafkaMessages, kafkaCahce } = require("../cache");
 const { producer } = require("../producer");
 
 const getKafkaMessages = (req,res) => {
+
+    const { roomId } = req.params;
     console.log("Get received");
     let n=2;
     // Serve messages from the cache
+    // let kafkaMessagesData = kafkaCahce[roomId].slice(-n);
     let kafkaMessagesData = kafkaMessages.slice(-n);
     console.log("Kafka Messages:", kafkaMessagesData);
+    console.log("Kafka Cache = ",kafkaCahce);
 
     if (kafkaMessages.length > 0) {
         console.log({message: kafkaMessagesData});
-        res.status(200).send({ success: true, message: kafkaMessagesData });
+        res.status(200).send({ success: true, message: kafkaMessagesData, messageCache:kafkaCahce });
     } else {
         res.status(200).send({ success: true, message: 'No messages available' });
     }
@@ -20,30 +24,17 @@ const getKafkaMessages = (req,res) => {
 const handleSendLoaction = async(req,res)=>{
     try {
         console.log("Post Received");
-        const { latitude, longitude } = req.body;
+        const { latitude, longitude, roomId, username } = req.body;
 
         const coordinatesArray = [
-                // {
-                //     value:JSON.stringify({
-                //         username:"Jibesh Roy",
-                //         latitude,
-                //         longitude
-                //     }),
-                // },
                 {
                     value:JSON.stringify({
-                        username:"Srinjan Dutta",
-                        latitude:latitude+Math.random(),
-                        longitude:longitude+Math.random()
+                        username,
+                        roomId,
+                        latitude,
+                        longitude
                     }),
-                },
-                {
-                    value:JSON.stringify({
-                        username:"Kaustav Dey",
-                        latitude:latitude+Math.random(),
-                        longitude:longitude+Math.random()
-                    })
-                }
+                },         
         ]
         await producer.send({
             topic: 'location-topic',
@@ -59,3 +50,5 @@ const handleSendLoaction = async(req,res)=>{
 
 
 module.exports={getKafkaMessages,handleSendLoaction};
+
+

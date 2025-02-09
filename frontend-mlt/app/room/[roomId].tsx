@@ -11,9 +11,10 @@ import MapRoom from "@/components/MapRoom";
 
 const Room = () => {
   
-  const { roomId } = useLocalSearchParams();
+  const { roomId }:{ roomId:string } = useLocalSearchParams();
   const [user,setUser] = useState("");
   console.log("Room ID = ",roomId);
+  console.log("Type of ROOM ID = ",typeof(roomId));
 
   useEffect(()=>{
     async function getData() {
@@ -34,7 +35,7 @@ const Room = () => {
 
   return (
     <View style={styles.container}>
-        <MapRoom/>
+        {roomId && typeof(roomId) === "string" && user && <MapRoom roomId={roomId} username={user} /> }
         { roomId && typeof(roomId) === "string" && <RoomTab sender={user} roomId={roomId} /> }
     </View>
   );
