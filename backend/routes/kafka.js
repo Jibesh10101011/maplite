@@ -2,7 +2,7 @@ const { Router } = require("express");
 const router = Router();
 const { getKafkaMessages,handleSendLoaction } = require("../controllers/kafka");
 
-router.route("/get-kafka-messages").get(getKafkaMessages)
+router.route("/get-kafka-messages/:roomId").get(getKafkaMessages);
 router.route("/send-location").post(handleSendLoaction);
 
 
