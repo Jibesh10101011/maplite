@@ -136,11 +136,15 @@ import {
       const fetchKafkaMessages = async () => {
         try {
 
-          if(!roomId) return;
+          console.log("Users Path = ",usersPath);
+
+
+            if(!roomId) return;
 
           const response = await axios.get(`${BACKEND_URL}/api/get-kafka-messages/${roomId}`);
-          // console.log("Response Data = ", response.data);
-              if (response.data.success && Array.isArray(response.data.messageCache)) {
+          console.log("Response Data = ", response.data);
+              if (response.data.success) {
+                console.log("YES Success");
                 // Create a new object to hold the updated paths
                 const updatedUsersPath: UserLocations = { ...usersPath };
                 // response.data.message.forEach((user: OthersLocationType) => {
@@ -164,7 +168,9 @@ import {
                 //     });
                 // });
 
+
                 Object.keys(response.data.messageCache).forEach((username) => { 
+
                   if (!updatedUsersPath.hasOwnProperty(username)) {
                     updatedUsersPath[username] = [];
                   }
@@ -177,10 +183,14 @@ import {
                   });
                 });
                 
+
       
             // Use setUsersPath to update the state correctly
             setUsersPath((prevUsersPath) => {
-              const mergedPaths: UserLocations = { ...prevUsersPath };
+              let mergedPaths: UserLocations = { ...prevUsersPath };
+
+              console.log("Merged Paths = ",mergedPaths);
+
               for (const username in updatedUsersPath) {
                 if (mergedPaths.hasOwnProperty(username)) {
                   mergedPaths[username] = [...mergedPaths[username], ...updatedUsersPath[username]];
@@ -188,9 +198,12 @@ import {
                   mergedPaths[username] = [...updatedUsersPath[username]];
                 }
               }
-              // console.log("Updated Users Location = ", mergedPaths);
               return mergedPaths;
             });
+
+
+            // console.log("Users Path = ",usersPath);
+// 
       
             setKafkaMessage(response.data.message);
           }
