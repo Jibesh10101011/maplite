@@ -1,5 +1,6 @@
 const { v4:uuidv4 } = require('uuid');
 const Room = require("../models/room");
+const redis = require("../redis")
 const { validateToken } = require('../services/authentication');
 
 const handleGenerateRoomId = (req,res) => {
@@ -48,4 +49,19 @@ const getAllRooms = async (req,res) => {
     }
 }
 
-module.exports = { handleGenerateRoomId, handleCreateRoom, handleValidateRoom, getAllRooms };
+
+const handleRoomDeletion = async(req,res) => {
+    try {
+        const { roomId } = req.params;
+        console.log(`Room ID : ${roomId}`);
+        const room = await Room.findByIdAndDelete(roomId);
+        console.log(`Current Room = ${room}`);
+        await redis.ltrim(`chat:${roomId}`, 0, -1); // Deleting messages of corresponding Room ID
+        console.log(`Room ID : ${roomId} All messages are deleted!`);
+        return res.status(200).json({message:`Room ID : ${roomId} deleted successfully!`});
+    } catch(error) {
+        return res.status(400).json({message:error.message});
+    }
+}
+
+module.exports = { handleGenerateRoomId, handleCreateRoom, handleValidateRoom, getAllRooms, handleRoomDeletion };
