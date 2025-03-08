@@ -7,6 +7,7 @@ const kafkaRoute = require("./routes/kafka");
 const authRoute = require("./routes/auth");
 const roomRoute = require("./routes/room");
 const redisRoute = require("./routes/test");
+const uploadRoute = require("./routes/upload");
 const { connectConsumer } = require("./consumer");
 const mongoose = require("mongoose");
 const http = require("http");
@@ -43,6 +44,7 @@ connectDb()
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use("/upload",uploadRoute);
 app.use("/auth",authRoute);
 app.use("/api",kafkaRoute);
 app.use("/room",roomRoute);

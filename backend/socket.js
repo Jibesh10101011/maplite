@@ -18,9 +18,9 @@ module.exports = (server) => {
       }
     });
 
-    socket.on("send_message", async ({ roomId, message, sender }) => {
+    socket.on("send_message", async ({ roomId, message, sender , type }) => {
       if (roomId && message) {
-        const newMessage = { sender, message, timestamp: new Date().toISOString() };
+        const newMessage = { sender, message, type , timestamp: new Date().toISOString() };
 
         // Save message to Redis
         await redis.rpush(`chat:${roomId}`, JSON.stringify(newMessage));

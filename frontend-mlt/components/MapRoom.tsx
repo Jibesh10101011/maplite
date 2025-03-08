@@ -199,7 +199,7 @@ import {
         }
       };
       
-      const interval = setInterval(fetchKafkaMessages, 3000); 
+      const interval = setInterval(fetchKafkaMessages, 30000); 
       return () => clearInterval(interval);
     }, []);
   
@@ -252,12 +252,6 @@ import {
           {/* Display user details */}
           <View style={styles.infoContainer}>
             {errorMsg && <Text style={styles.errorText}>{errorMsg}</Text>}
-            {/* {Array.isArray(kafkaMessage) &&
-              kafkaMessage.map((user: OthersLocationType, index) => (
-                <Text style={styles.kafkaText} key={index}>
-                  {`Username: ${user.username}, Latitude: ${user.latitude}, Longitude: ${user.longitude}`}
-                </Text>
-              ))} */}
               {Object.entries(usersPath).map(([key, path]) => (
                   <Text style={styles.kafkaText} key={`${key}+332`}>
                   {`Username : ${key}, Latitude: ${path[path.length-1].latitude}, Longitude: ${path[path.length-1].longitude}`}
