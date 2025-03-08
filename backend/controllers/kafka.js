@@ -10,11 +10,11 @@ const getKafkaMessages = (req,res) => {
     // let kafkaMessagesData = kafkaCahce[roomId].slice(-n);
     let kafkaMessagesData = kafkaMessages.slice(-n);
     console.log("Kafka Messages:", kafkaMessagesData);
-    console.log("Kafka Cache = ",kafkaCahce);
+    console.log("Kafka Cache = ",kafkaCahce[roomId]);
 
     if (kafkaMessages.length > 0) {
         console.log({message: kafkaMessagesData});
-        res.status(200).send({ success: true, message: kafkaMessagesData, messageCache:kafkaCahce });
+        res.status(200).send({ success: true, message: kafkaMessagesData, messageCache:kafkaCahce[roomId] });
     } else {
         res.status(200).send({ success: true, message: 'No messages available' });
     }

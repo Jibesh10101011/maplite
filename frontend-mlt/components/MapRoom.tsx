@@ -136,10 +136,7 @@ import {
       const fetchKafkaMessages = async () => {
         try {
 
-          console.log("Users Path = ",usersPath);
-
-
-            if(!roomId) return;
+          if(!roomId) return;
 
           const response = await axios.get(`${BACKEND_URL}/api/get-kafka-messages/${roomId}`);
           console.log("Response Data = ", response.data);
@@ -147,40 +144,25 @@ import {
                 console.log("YES Success");
                 // Create a new object to hold the updated paths
                 const updatedUsersPath: UserLocations = { ...usersPath };
-                // response.data.message.forEach((user: OthersLocationType) => {
-                //   if (!updatedUsersPath.hasOwnProperty(user.username)) {
-                //     updatedUsersPath[user.username] = [];
-                //   }
-                //   updatedUsersPath[user.username].push({
-                //     latitude: user.latitude,
-                //     longitude: user.longitude,
-                //   });
-                // }
-
-
-                // response.data.messageCache.forEach((user: OthersLocationType) => {
-                //     if (!updatedUsersPath.hasOwnProperty(user.username)) {
-                //       updatedUsersPath[user.username] = [];
-                //     }
-                //     updatedUsersPath[user.username].push({
-                //       latitude: user.latitude,
-                //       longitude: user.longitude,
-                //     });
-                // });
-
-
+                console.log("Keys = ",Object.keys(response.data.messageCache));
                 Object.keys(response.data.messageCache).forEach((username) => { 
 
                   if (!updatedUsersPath.hasOwnProperty(username)) {
                     updatedUsersPath[username] = [];
                   }
                   
+                  console.log("Username  = ",username);
+
                   response.data.messageCache[username].forEach((location:any) => {
+                    updatedUsersPath[username].pop();
                     updatedUsersPath[username].push({
                       latitude: location.latitude,
                       longitude: location.longitude,
                     });
                   });
+
+                  console.log("Updated Users Path = ",updatedUsersPath);
+
                 });
                 
 
@@ -189,7 +171,7 @@ import {
             setUsersPath((prevUsersPath) => {
               let mergedPaths: UserLocations = { ...prevUsersPath };
 
-              console.log("Merged Paths = ",mergedPaths);
+              // console.log("Merged Paths = ",mergedPaths);
 
               for (const username in updatedUsersPath) {
                 if (mergedPaths.hasOwnProperty(username)) {
@@ -198,11 +180,16 @@ import {
                   mergedPaths[username] = [...updatedUsersPath[username]];
                 }
               }
+
+
+
+              console.log("Before returning mergedPaths = ",mergedPaths);
+
               return mergedPaths;
             });
 
 
-            // console.log("Users Path = ",usersPath);
+            console.log("Users Path = ",usersPath);
 // 
       
             setKafkaMessage(response.data.message);
@@ -227,48 +214,29 @@ import {
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}>
-              {path.length > 1 && (
-                <Polyline
-                  coordinates={path}
-                  strokeColor="#FF0000" // Path color
-                  strokeWidth={5} // Path width
-                />
-  
-              )}
-              {location && (
-                <Marker
-                  coordinate={{
-                    latitude: location.latitude,
-                    longitude: location.longitude,
-                  }}
-                  title="Jibesh Roy"
-                  description={`Latitude: ${location.latitude}, Longitude: ${location.longitude}`}
-                  pinColor="red" // Different color for other users
-                />
-              )}
-              {Array.isArray(kafkaMessage) &&
-                kafkaMessage.map((user: OthersLocationType, index) => (
-                  <View key={index+2929}>
-                  <Marker
-                    
-                    coordinate={{
-                      latitude: user.latitude,
-                      longitude: user.longitude,
-                    }}
-                    title={user.username}
-                    description={`Latitude: ${user.latitude}, Longitude: ${user.longitude}`}
-                    pinColor="red" // Different color for other users
-                  />
-  
-                  {usersPath && usersPath[user.username] && 
-                    <Polyline
-                      coordinates={usersPath[user.username]}
-                      strokeColor="blue" // Path color
-                      strokeWidth={5}
+            
+                {Object.entries(usersPath).map(([key, path]) => (
+                  <View key={`${key}12`}>
+                    <Marker
+                      coordinate={{
+                        latitude: path[path.length - 1].latitude,
+                        longitude: path[path.length - 1].longitude,
+                      }}
+                      title={key}
+                      description={`Latitude: ${path[path.length - 1].latitude}, Longitude: ${path[path.length - 1].longitude}`}
+                      pinColor="red"
                     />
-                  }
+
+                    {path.length > 0 && (
+                      <Polyline
+                        coordinates={path}
+                        strokeColor="blue"
+                        strokeWidth={5}
+                      />
+                    )}
                   </View>
                 ))}
+
             </MapView>
             <View style={styles.zoomControls}>
               <TouchableOpacity style={styles.zoomButton} onPress={handleZoomIn}>
@@ -284,10 +252,15 @@ import {
           {/* Display user details */}
           <View style={styles.infoContainer}>
             {errorMsg && <Text style={styles.errorText}>{errorMsg}</Text>}
-            {Array.isArray(kafkaMessage) &&
+            {/* {Array.isArray(kafkaMessage) &&
               kafkaMessage.map((user: OthersLocationType, index) => (
                 <Text style={styles.kafkaText} key={index}>
                   {`Username: ${user.username}, Latitude: ${user.latitude}, Longitude: ${user.longitude}`}
+                </Text>
+              ))} */}
+              {Object.entries(usersPath).map(([key, path]) => (
+                  <Text style={styles.kafkaText} key={`${key}+332`}>
+                  {`Username : ${key}, Latitude: ${path[path.length-1].latitude}, Longitude: ${path[path.length-1].longitude}`}
                 </Text>
               ))}
           </View>
