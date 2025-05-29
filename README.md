@@ -140,3 +140,8 @@ npm start
 ```bash
 docker run --rm -it --network="bridge" -p 8081:8081 -p 19000:19000 -p 19001:19001 -p 19002:19002 -e REACT_NATIVE_PACKAGER_HOSTNAME=<Ipv4 Address> -v "D:\Data\mapelite-test\maplite\frontend:/app" <your-image> npx expo start --host lan
 ```
+
+# Video Demo
+
+https://github.com/user-attachments/assets/a9903995-f377-44a8-a882-c4ba8ad4e02d
+
