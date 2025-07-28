@@ -6,14 +6,8 @@ const getKafkaMessages = (req,res) => {
     const { roomId } = req.params;
     console.log("Get received");
     let n=2;
-    // Serve messages from the cache
-    // let kafkaMessagesData = kafkaCahce[roomId].slice(-n);
     let kafkaMessagesData = kafkaMessages.slice(-n);
-    // console.log("Kafka Messages:", kafkaMessagesData);
-    // console.log("Kafka Cache = ",kafkaCahce[roomId]);
-
     if (kafkaMessages.length > 0) {
-        // console.log({message: kafkaMessagesData});
         res.status(200).send({ success: true, message: kafkaMessagesData, messageCache:kafkaCahce[roomId] });
     } else {
         res.status(200).send({ success: true, message: 'No messages available' });
