@@ -31,7 +31,7 @@ cd frontend
     ```
 2. Copy IpV4 Addesss from this
    
-![WhatsApp Image 2025-02-04 at 11 49 56_8b1cbf5f](https://github.com/user-attachments/assets/755bfac4-c457-40b6-a070-4ae4dc4026d2)
+<img width="696" height="90" alt="need_to_edit" src="https://github.com/user-attachments/assets/0ea3df1e-420b-4bad-a987-db574da8cfaa" />
 
 
 4. Move to `frontend/.env` and here `BROKERS_CONNECTING_IP="<Ipv4Address>:9092"` replace
@@ -95,7 +95,7 @@ ipconfig
 
 ## Step-7 : Copy the circled IpV4 Address and replace with `<IpV4 Address>`
 
-![image](https://github.com/user-attachments/assets/241febc5-572b-488c-9a38-77e3bd0cb8d8)
+<img width="696" height="90" alt="need_to_edit" src="https://github.com/user-attachments/assets/0ea3df1e-420b-4bad-a987-db574da8cfaa" />
 
 
 ## Step-8 : Start confluentinc/cp-kafka
@@ -141,7 +141,10 @@ npm start
 docker run --rm -it --network="bridge" -p 8081:8081 -p 19000:19000 -p 19001:19001 -p 19002:19002 -e REACT_NATIVE_PACKAGER_HOSTNAME=<Ipv4 Address> -v "D:\Data\mapelite-test\maplite\frontend:/app" <your-image> npx expo start --host lan
 ```
 
+
+# Architecture
+<img width="1038" height="467" alt="maplite_Architecture" src="https://github.com/user-attachments/assets/6d81e12a-14e3-4c23-a76f-62d216a37553" />
+
 # Video Demo
 
 https://github.com/user-attachments/assets/a9903995-f377-44a8-a882-c4ba8ad4e02d
-
