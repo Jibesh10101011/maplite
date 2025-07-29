@@ -1,8 +1,8 @@
 export const s3Client = new S3Client({
     region:"ap-south-1",
     credentials: {
-        accessKeyId:"AKIATBXUERVWASTMRH5O",
-        secretAccessKey:"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"
+        accessKeyId:"",
+        secretAccessKey:""
     }
 });
 
