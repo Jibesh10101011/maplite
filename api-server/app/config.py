@@ -5,6 +5,10 @@ class Settings(BaseSettings):
     DB_URL: str
     SECRET_KEY: str
     DEBUG: bool = False
+    GEO_LOCATION_API: str
+    IMAGE_LOCATION_API_ENDPOINT: str
+    IMAGE_LOCATION_API_KEY: str
+    GEMINI_API_KEY: str
 
     class Config:
         env_file = ".env"
