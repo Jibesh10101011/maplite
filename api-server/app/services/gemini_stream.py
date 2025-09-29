@@ -18,20 +18,3 @@ async def generate_gemini_stream(query: str, lat: float, lon: float):
     # Stream each part of the response
     for chunk in chat.send_message(full_prompt, stream=True):
         yield f"data: {chunk.text}\n\n"
-
-
-# curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent" \
-#   -H 'Content-Type: application/json' \
-#   -H 'X-goog-api-key: AIzaSyAKmFE3PqAwdDU27KNif7WdhlSLxwNkLkE' \
-#   -X POST \
-#   -d '{
-#     "contents": [
-#       {
-#         "parts": [
-#           {
-#             "text": "Explain how AI works in a few words"
-#           }
-#         ]
-#       }
-#     ]
-#   }'
