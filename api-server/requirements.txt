@@ -1,0 +1,7 @@
+fastapi[standard] 
+python-dotenv 
+uvicorn
+pydantic-settings
+google-generativeai
+
+
