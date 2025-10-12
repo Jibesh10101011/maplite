@@ -7,7 +7,8 @@ interface CustomButtonProps {
     handlePress : () => void,
     containerStyles?:string,
     textStyles?:string,
-    isLoading?:boolean
+    isLoading?:boolean,
+    variant?: 'primary' | 'secondary' | 'outline'
 
 };
 

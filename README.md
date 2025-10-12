@@ -119,6 +119,8 @@ Use the IPv4 address in the next step.
 
 #### Step 6 : Start Kafka
 
+## Step-8 : Start confluentinc/cp-kafka
+
 ```bash
 docker run -p 9092:9092 \
   -e KAFKA_ZOOKEEPER_CONNECT=<IPv4 Address>:2181 \
@@ -126,8 +128,9 @@ docker run -p 9092:9092 \
   -e KAFKA_LISTENER_SECURITY_PROTOCOL=PLAINTEXT \
   -e KAFKA_LISTENER_PORT=9092 \
   -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
-  confluentinc/cp-kafka
+  confluentinc/cp-kafka:7.4.0
 ```
+
 
 Update your `backend/.env`:
 
