@@ -4,7 +4,11 @@ import { ApiReponse } from "../utils/ApiResponse";
 import { ApiError } from "../utils/ApiError";
 
 
-export async function handleCoordinates(request: Request, response: Response) {
+export async function handleCoordinates(
+    request: Request, 
+    response: Response
+): Promise<void> {
+
     
     const producer = await connectProducer();
     
@@ -26,7 +30,7 @@ export async function handleCoordinates(request: Request, response: Response) {
             messages: coordinatesArray,
         });
         
-        return response
+        response
             .status(200)
             .json(new ApiReponse(200,{},"location tracking successfull"))
 
