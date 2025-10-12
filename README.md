@@ -1,142 +1,198 @@
-# Contribution Guidelines 
-  1. Create a Fork first
-     
-![WhatsApp Image 2025-02-04 at 11 48 45_525e1371](https://github.com/user-attachments/assets/f216e854-db60-4e13-ac9c-efdda0549e6f)
+# MapLite – Real‑time Group Location Sharing + Chat
 
-  2. Create a Issue and then do a PR
+*A realtime, room‑based location sharing app with chat and AI‑powered location feedback.*
 
+![Architecture](https://github.com/user-attachments/assets/6d81e12a-14e3-4c23-a76f-62d216a37553)
 
-# FRONTEND SETUP
+## Features
 
-## Prequisites 
-Install [Expo Go](https://expo.dev/go) App
+* Realtime group location sharing
+* Realtime in-room chat
+* AI-powered contextual feedback about user location
+* Kafka-backed event streaming
+* Node.js WebSocket gateway
+* FastAPI OpenAI integration for location metadata
 
+## Video Demo
 
-## Steps for starting the Application
+https://github.com/user-attachments/assets/a9903995-f377-44a8-a882-c4ba8ad4e02d
 
-### Step-1 : Clone the Repo 
+---
+
+## FRONTEND SETUP
+
+### Prerequisites
+
+* Install [Expo Go](https://expo.dev/go) App
+
+### Steps
+
+#### Step 1 : Clone the Repo
+
 ```bash
 git clone REPO_URL
 ```
 
-### Step-2 : Navigate to root directory
+#### Step 2 : Navigate to frontend directory
+
 ```bash
 cd frontend
 ```
 
-### Step-3 : Set up frontend `.env`
-1. Run the command 
-    ```bash
-    ipconfig
-    ```
-2. Copy IpV4 Addesss from this
-   
-![WhatsApp Image 2025-02-04 at 11 49 56_8b1cbf5f](https://github.com/user-attachments/assets/755bfac4-c457-40b6-a070-4ae4dc4026d2)
+#### Step 3 : Set up `.env`
 
+1. Run the command: `ipconfig`
+2. Copy your **IPv4 Address**
+3. In `frontend/.env`, set:
+<img width="696" height="90" alt="need_to_edit" src="https://github.com/user-attachments/assets/0ea3df1e-420b-4bad-a987-db574da8cfaa" />
 
-4. Move to `frontend/.env` and here `BROKERS_CONNECTING_IP="<Ipv4Address>:9092"` replace
-this `<Ipv4 Address>` to the `Copied Ipv4 Address`
+```env
+BROKERS_CONNECTING_IP="<IPv4 Address>:9092"
+```
 
+#### Step 4 : Install dependencies
 
-### Step-4 : Install requirements
-Run the command
 ```bash
 npm install
 ```
 
+#### Step 5 : Run the application
 
-
-### Step-5 : Run the application
 ```bash
 npx expo start
 ```
 
-### Step-6 : Open the App on your phone and Scan the QR
+#### Step 6 : Scan QR on your phone
 
-![image](https://github.com/user-attachments/assets/98fd243c-4bcb-4027-bb42-b69b98971236)
+Use the Expo Go App to scan the QR and launch the app.
 
+#### Hot Reload / Exit Shortcuts
 
-### Neccessary Interrupts For realoading the Application and closing
+```
+'r'  – Reload App
+Ctrl+C – Stop server
+```
 
-`
-cick : 'r' (for reloading)
-click : ctrl+c (for closing)
-`
+---
 
+## BACKEND SETUP
 
-# BACKEND SETUP
+### Prerequisites
 
-## Prequisites 
-  1. Install Docker
+* Docker installed and running
 
-## Step-1 : Navigate to Root Directory 
+### Steps
+
+#### Step 1 : Navigate to backend directory
+
 ```bash
 cd backend
 ```
-## Step-2 : Install requirements
+
+#### Step 2 : Install dependencies
+
 ```bash
 npm install
 ```
 
-## Step-4 : Open Docker
-`Click windows+s , type docker and open it`
+#### Step 3 : Start Docker
 
-## Step-5 : Start Zookeeper server
-Run the command on your shell
+Search for Docker in Windows (`Win + S`) and open it.
+
+#### Step 4 : Start Zookeeper server
+
 ```bash
 docker run -p 2181:2181 zookeeper
 ```
 
-## Step-6 : Run command on Powershell
-Run the command on your shell
+#### Step 5 : Get IPv4 Address
+
+Run:
+
 ```bash
 ipconfig
 ```
+<img width="696" height="90" alt="need_to_edit" src="https://github.com/user-attachments/assets/0ea3df1e-420b-4bad-a987-db574da8cfaa" />
 
-## Step-7 : Copy the circled IpV4 Address and replace with `<IpV4 Address>`
 
-![image](https://github.com/user-attachments/assets/241febc5-572b-488c-9a38-77e3bd0cb8d8)
+Use the IPv4 address in the next step.
 
+#### Step 6 : Start Kafka
 
 ## Step-8 : Start confluentinc/cp-kafka
-1. Run the command
-    ```bash
-    docker run -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=<IpV4 Address>:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://<IpV4 Address>:9092 -e KAFKA_LISTENER_SECURITY_PROTOCOL=PLAINTEXT -e KAFKA_LISTENER_PORT=9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka:7.4.0
-    ```
 
-2. And also update `backend/.env` here `BROKERS_CONNECTING_IP="192.168.0.101:9092` simply update `192.168.0.101` to the same `<IpV4 Address>`
+```bash
+docker run -p 9092:9092 \
+  -e KAFKA_ZOOKEEPER_CONNECT=<IPv4 Address>:2181 \
+  -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://<IPv4 Address>:9092 \
+  -e KAFKA_LISTENER_SECURITY_PROTOCOL=PLAINTEXT \
+  -e KAFKA_LISTENER_PORT=9092 \
+  -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
+  confluentinc/cp-kafka:7.4.0
+```
 
-## Step-9 : Start Redis Server
-1. Run the command 
-    ```bash
-    docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
-    ```
 
-    
+Update your `backend/.env`:
 
-## Step-10 : Start the backend Server
-Run the command
+```env
+BROKERS_CONNECTING_IP="<IPv4 Address>:9092"
+```
+
+#### Step 7 : Start Redis server
+
+```bash
+docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
+```
+
+#### Step 8 : Start backend server
+
 ```bash
 npm start
 ```
 
-# API SERVER SETUP
+---
+
+## API SERVER SETUP
 
 ```bash
 cd apiServer
-```
-Download Neccessary modules
-```bash
 npm install
-```
-Start Server
-```bash
 npm start
 ```
 
+---
 
-# Docker Frontend Setup
+## Docker Frontend Setup (Optional)
 
 ```bash
-docker run --rm -it --network="bridge" -p 8081:8081 -p 19000:19000 -p 19001:19001 -p 19002:19002 -e REACT_NATIVE_PACKAGER_HOSTNAME=<Ipv4 Address> -v "D:\Data\mapelite-test\maplite\frontend:/app" <your-image> npx expo start --host lan
+docker run --rm -it --network="bridge" \
+  -p 8081:8081 -p 19000:19000 -p 19001:19001 -p 19002:19002 \
+  -e REACT_NATIVE_PACKAGER_HOSTNAME=<IPv4 Address> \
+  -v "D:\Data\mapelite-test\maplite\frontend:/app" \
+  <your-image> npx expo start --host lan
 ```
+
+---
+
+## CONTRIBUTION GUIDELINES
+
+1. Create a Fork
+
+![Fork Screenshot](https://github.com/user-attachments/assets/f216e854-db60-4e13-ac9c-efdda0549e6f)
+
+2. Create an Issue and submit a Pull Request (PR)
+
+---
+
+## Architecture Flow Summary
+
+1. **Users** share messages and coordinates → **Node.js** (via WebSocket)
+2. **Node.js** produces messages to Kafka topics
+3. **Kafka** acts as the messaging backbone
+4. **FastAPI** consumes coordinates and fetches enriched feedback via **OpenAI**
+5. **FastAPI** produces AI feedback → **Kafka** → **Node.js** → **Clients**
+
+---
+
+*For any queries or suggestions, feel free to open an issue.*
+
