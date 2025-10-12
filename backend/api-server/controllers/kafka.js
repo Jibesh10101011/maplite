@@ -8,7 +8,7 @@ const getKafkaMessages = (req,res) => {
     let n=2;
     let kafkaMessagesData = kafkaMessages.slice(-n);
     if (kafkaMessages.length > 0) {
-        res.status(200).send({ success: true, message: kafkaMessagesData, messageCache:kafkaCahce[roomId] });
+        res.status(200).send({ success: true, message: kafkaMessagesData, messageCache: kafkaCahce[roomId] });
     } else {
         res.status(200).send({ success: true, message: 'No messages available' });
     }

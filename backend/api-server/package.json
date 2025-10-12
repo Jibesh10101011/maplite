@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "api-server",
   "version": "1.0.0",
   "description": "Backend for maplite will handle the full backend part for maplite",
   "main": "index.js",
