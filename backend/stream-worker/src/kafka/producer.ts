@@ -1,4 +1,4 @@
-import { kafka } from "../config/kafka";
+import { kafka } from "../config/kafkaClient";
 import { type Producer } from "kafkajs";
 
 let producer: Producer | null = null;

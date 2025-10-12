@@ -3,7 +3,7 @@ import { type CreateUserInput, type LoginInput } from "../schemas/user.schema";
 import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
 import { asyncHandler } from "../utils/asyncHandler";
-import { IUser, User } from "../models/user.model";
+import { User } from "../models/user.model";
 
 export const handleSignIn = asyncHandler(async(
     request: Request<{}, {}, LoginInput>,   // <params, resBody, reqBody, reqQuery>
