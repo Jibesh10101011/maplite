@@ -8,6 +8,7 @@ export async function handleCoordinates(
     request: Request, 
     response: Response
 ): Promise<void> {
+
     
     const producer = await connectProducer();
     
