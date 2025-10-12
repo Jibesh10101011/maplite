@@ -1,14 +1,23 @@
-    import express from 'express';
+import dotenv from "dotenv";
+dotenv.config();
 
-    const app = express();
-    const port = process.env.PORT || 3000;
+import app from "./app";
+import { connectDatabase } from "./database";
 
-    app.use(express.json()); // For parsing JSON request bodies
+const PORT = process.env.PORT!;
 
-    app.get('/', (req, res) => {
-      res.send('Hello from TypeScript Express!');
+const startServer = async() => {
+  try {
+    await connectDatabase();
+    app.listen(PORT, () => {
+      console.log(`Server is running at port: ${PORT}`);
+      console.log(`http://localhost:${PORT}`);
     });
+  } catch(error) {
+    console.log("MONGO db connection failed !!! ", error);
+    process.exit(1);
+  }
+};
 
-    app.listen(port, () => {
-      console.log(`Server running on port ${port}`);
-    });
+startServer();
+
