@@ -31,7 +31,7 @@ const connectConsumer = async () => {
     await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
             const parsedMessage = JSON.parse(message.value.toString());
-            // console.log('Received Kafka message:', parsedMessage);
+            console.log('Received Kafka message:', parsedMessage);
             
             const roomId = parsedMessage.roomId;
             const username = parsedMessage.username;
