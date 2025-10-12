@@ -5,11 +5,6 @@ import { ApiError } from "../utils/ApiError";
 import { asyncHandler } from "../utils/asyncHandler";
 import { CookieOptions } from "express";
 
-interface AccessTokenPayload extends JwtPayload {
-  _id: string;
-  email: string;
-  username: string;
-}
 
 export const verifyJWT = asyncHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
