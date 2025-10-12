@@ -37,7 +37,7 @@ const handleFileUpload = async(req,res) => {
         });
 
         await s3Client.send(command);
-        const fileUrl = `https://mapelite-static-files.s3.eu-north-1.amazonaws.com/Profile/user-static-files/${file.originalname}`;
+        const fileUrl = `${process.env.S3_BUCKET_URL}/${file.originalname}`;
         res.json({ fileUrl });
 
     } catch(error) {
