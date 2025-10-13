@@ -4,6 +4,7 @@ import { User } from "../models/user.model";
 import { ApiError } from "../utils/ApiError";
 import { asyncHandler } from "../utils/asyncHandler";
 import { CookieOptions } from "express";
+import { AccessTokenPayload } from "../types/payload";
 
 
 export const verifyJWT = asyncHandler(
@@ -54,7 +55,7 @@ export const verifyJWT = asyncHandler(
 
       const newAccessToken = user.generateAccessToken();
       const newRefreshToken = user.generateRefreshToken();
-      const REFRESH_TOKEN_EXPIRY = process.env.REFRESH_TOKEN_EXPIRY_SECOND!;
+      const REFRESH_TOKEN_EXPIRY = Number(process.env.REFRESH_TOKEN_EXPIRY_SECOND!);
 
       const cookieOptions: CookieOptions = {
         httpOnly: true,

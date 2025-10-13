@@ -1,6 +1,9 @@
 import express, {type Request, type Response} from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import authRouter from "./routes/auth.route";
+import roomRouter from "./routes/room.route";
+import uploadRouter from "./routes/upload.route";
 
 const app = express();
 
@@ -16,7 +19,11 @@ app.use(express.urlencoded({ extended: true, limit: process.env.URL_ENCODED_LIMI
 app.use(express.static("public"));
 app.use(cookieParser());
 
-app.get("/", (request: Request, response: Response) => {
+app.use("/api/v2/auth", authRouter);
+app.use("/api/v2/room", roomRouter);
+app.use("/api/v2/upload", uploadRouter);
+
+app.get("/api/v2/test", (request: Request, response: Response) => {
     return response.status(200).json({
         message: "Hello, I am server"
     });

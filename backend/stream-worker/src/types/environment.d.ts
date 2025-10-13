@@ -3,6 +3,7 @@ declare namespace NodeJS {
     CLIENT_ID: string;
     BROKERS_CONNECTING_IP: string;
     GROUP_ID: string;
-    PORT: number
+    PORT: number;
+    REDIS_URL: string;
   }
 }

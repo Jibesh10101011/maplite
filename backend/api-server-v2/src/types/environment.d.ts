@@ -12,5 +12,9 @@ declare namespace NodeJS {
     S3_CLIENT_ACCESS_KEY_ID: string;
     S3_CLIENT_SECRET_ACCESS_KEY: string;
     AWS_BUCKET_NAME: string;
+    CLIENT_ID: string;
+    BROKERS_CONNECTING_IP: string;
+    GROUP_ID: string;
+    REDIS_URL: string;
   }
 }

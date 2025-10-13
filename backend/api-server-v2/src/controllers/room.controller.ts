@@ -1,20 +1,20 @@
-import { type Request, type Response } from "express";
+import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import { ApiResponse } from "../utils/ApiResponse";
 import { ApiError } from "../utils/ApiError";
 import { 
-    type CreateRoomInput, 
-    type ValidateRoomInput 
+    CreateRoomInput, 
+    ValidateRoomInput 
 } from "../schemas/room.schema"; 
-import { v4 as uuidv4 } from "uuid";
 import { Room } from "../models/room.model";
+import { uuid } from 'uuidv4';
 
 
 export const handleGenerateRoomId = asyncHandler(async(
     request: Request, 
     response: Response
 ): Promise<void> => {
-    const roomId = uuidv4().substring(0,8);
+    const roomId = uuid().substring(0,8);
     response.status(200).json(
         new ApiResponse(
             200, 

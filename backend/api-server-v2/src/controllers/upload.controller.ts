@@ -1,4 +1,4 @@
-import { type Request, type Response } from "express";
+import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { ApiResponse } from "../utils/ApiResponse";

@@ -1,9 +1,10 @@
-import { type Request, type Response, type CookieOptions } from "express";
-import { type CreateUserInput, type LoginInput } from "../schemas/user.schema";
+import { Request, Response, CookieOptions } from "express";
+import { CreateUserInput, LoginInput } from "../schemas/user.schema";
 import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
 import { asyncHandler } from "../utils/asyncHandler";
 import { User } from "../models/user.model";
+import { AccessTokenPayload } from "../types/payload";
 
 export const handleSignIn = asyncHandler(async(
     request: Request<{}, {}, LoginInput>,   // <params, resBody, reqBody, reqQuery>
