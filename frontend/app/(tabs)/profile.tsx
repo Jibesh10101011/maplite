@@ -8,6 +8,7 @@ import {
   RefreshControl,
   Image,
   TouchableOpacity,
+  Pressable,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Room from "@/components/Room";
@@ -78,7 +79,7 @@ const Profile = () => {
     try {
       if (!userId) return;
       setIsLoading(true);
-      const allRooms = await getAllRooms(userId);
+      const allRooms = await getAllRooms();
       setIsLoading(false);
       setSearchedRooms(allRooms);
       setRooms(allRooms);
@@ -91,7 +92,7 @@ const Profile = () => {
     const fetchUser = async () => {
       try {
         const userData = await getProtectedData();
-        setUserId(userData.user.id);
+        setUserId(userData._id);
       } catch (error) {
         router.replace("/(auth)/sign-in");
       }
@@ -123,11 +124,11 @@ const Profile = () => {
         Create your first room to start collaborating with others
       </Text>
       <Link href="/(tabs)/create" asChild>
-        <View style={styles.createRoomButton}>
+        <Pressable style={styles.createRoomButton}>
           <Text style={styles.createRoomButtonText}>
             Create Your First Room
           </Text>
-        </View>
+        </Pressable>
       </Link>
     </Animated.View>
   );

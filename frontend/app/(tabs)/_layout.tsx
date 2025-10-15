@@ -131,9 +131,9 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
                 ? Icons.home
                 : route.name === 'create'
                 ? Icons.plus
-                : route.name === 'bookmark'
-                ? Icons.bookmark
-                : Icons.profile;
+                : route.name === 'profile'
+                ? Icons.profile
+                : Icons.bookmark
 
             return (
               <TouchableOpacity
@@ -187,12 +187,6 @@ export default function TabLayout() {
         name="create" 
         options={{ 
           title: 'Create',
-        }} 
-      />
-      <Tabs.Screen 
-        name="bookmark" 
-        options={{ 
-          title: 'Saved',
         }} 
       />
       <Tabs.Screen 

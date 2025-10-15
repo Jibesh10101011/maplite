@@ -2,8 +2,11 @@ import axios from "axios";
 import { router } from "expo-router";
 import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const BACKEND_URL = "http://192.168.0.101:3000";
+// const BACKEND_URL = "http://192.168.0.101:3000";
+const BACKEND_URL_V2 = "http://192.168.0.101:8000/api/v2";
+const BACKEND_STREAM_WORKER_URL = "http://192.168.0.101:5000";
 
+// done
 export async function createUser(username, email, password) {
   try {
     console.log({
@@ -11,8 +14,8 @@ export async function createUser(username, email, password) {
       email,
       password,
     });
-    console.log(`${BACKEND_URL}/auth/sign-up`);
-    const response = await axios.post(`${BACKEND_URL}/auth/sign-up`, {
+    console.log(`${BACKEND_URL_V2}/auth/sign-up`);
+    const response = await axios.post(`${BACKEND_URL_V2}/auth/sign-up`, {
       username,
       email,
       password,
@@ -25,18 +28,20 @@ export async function createUser(username, email, password) {
   }
 }
 
+// done
 export async function handleSignIn(email, password) {
   try {
     console.log({ email, password });
-    const response = await axios.post(`${BACKEND_URL}/auth/sign-in`, {
-      email,
-      password,
-    });
+    const response = await axios.post(
+      `${BACKEND_URL_V2}/auth/sign-in`,
+      { email, password },
+      { withCredentials: true }
+    );
+
     console.log(response.data);
-    if (response.data.success) {
-      const { token } = response.data;
-      await AsyncStorage.setItem("token", token);
+    if (response.data.statusCode == "200") {
       console.log("Sign In successfull ", response.data);
+      await AsyncStorage.setItem("accessToken", response.data.data.accessToken);
       router.push("/(tabs)");
     } else {
       Alert.alert("Invalid Username or Password");
@@ -47,30 +52,32 @@ export async function handleSignIn(email, password) {
   }
 }
 
+// done
 export async function getProtectedData() {
   try {
-    const token = await AsyncStorage.getItem("token");
+    const token = await AsyncStorage.getItem("accessToken");
     if (!token) throw new Error("No token found");
 
-    const response = await axios.get(`${BACKEND_URL}/auth/validate-token`, {
+    const response = await axios.get(`${BACKEND_URL_V2}/auth/user/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    if (!response.data.success) throw new Error("Invalid token");
+    console.log(response.data);
 
-    return response.data;
+    return response.data.data;
   } catch (error) {
     Alert.alert("Session expired", "Please log in again.");
     throw error; // Let the caller handle redirection
   }
 }
 
+// done
 export async function handleGenerateRoomId() {
   try {
     console.log("Handle Triggered");
-    const response = await axios.get(`${BACKEND_URL}/room/genId`);
-    console.log(response.data);
-    const { roomId } = response.data;
+    const response = await axios.get(`${BACKEND_URL_V2}/room/genId`);
+    const { roomId } = response.data.data;
+    console.log(roomId);
     return roomId;
   } catch (error) {
     console.log(error);
@@ -78,9 +85,10 @@ export async function handleGenerateRoomId() {
   }
 }
 
+// done
 export async function handleCreateRoom(roomId) {
   try {
-    const token = await AsyncStorage.getItem("token");
+    const token = await AsyncStorage.getItem("accessToken");
 
     console.log("Handle Create Room Triggered : ", token);
     console.log(roomId);
@@ -95,12 +103,13 @@ export async function handleCreateRoom(roomId) {
       return router.push(`/(tabs)/create`);
     }
 
-    const response = await axios.post(`${BACKEND_URL}/room/create`, {
-      token,
-      roomId,
-    });
-    const { success } = response.data;
-    return success;
+    const response = await axios.post(
+      `${BACKEND_URL_V2}/room/create`,
+      { roomId },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    return true;
   } catch (error) {
     console.log(error.message);
     Alert.alert("Some Problem Occured!");
@@ -108,12 +117,22 @@ export async function handleCreateRoom(roomId) {
   }
 }
 
+
+// testing
 export async function handleValidateRoomAndJoin(roomId) {
   try {
-    const response = await axios.post(`${BACKEND_URL}/room/validate`, {
-      roomId,
-    });
-    const { success } = response.data;
+    const token = await AsyncStorage.getItem("accessToken");
+
+    const response = await axios.post(
+      `${BACKEND_URL_V2}/room/validate`,
+      { roomId },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    console.log(response.data);
+
+    const { success } = response.data.data;
+    console.log("Sucess = ", success);
     return success;
   } catch (error) {
     Alert.alert("Some error occured!");
@@ -121,12 +140,14 @@ export async function handleValidateRoomAndJoin(roomId) {
   }
 }
 
+
+// done
 export async function handleSignOut() {
   try {
     console.log("Handle Sign Out Clicked!");
-    const token = await AsyncStorage.getItem("token");
+    const token = await AsyncStorage.getItem("accessToken");
     if (token) {
-      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("accessToken");
     }
     return router.push("/(auth)/sign-in");
   } catch (error) {
@@ -135,19 +156,17 @@ export async function handleSignOut() {
   }
 }
 
-export async function getAllRooms(userId) {
+
+// done
+export async function getAllRooms() {
   try {
-    if (userId) {
-      console.log("User ID = ", userId);
-      const response = await axios.get(`${BACKEND_URL}/room/all`, {
-        headers: { userId },
-      });
-      const { rooms } = response.data;
-      return rooms;
-    } else {
-      Alert.alert("Invalid UserId");
-      return [];
-    }
+    const token = await AsyncStorage.getItem("accessToken");
+    console.log("Token = ", token);
+    const response = await axios.get(`${BACKEND_URL_V2}/room/all`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const rooms = response.data.data.map((ele) => ele.roomId);
+    return rooms;
   } catch (error) {
     Alert.alert("Some Problem Occured!");
     throw error;

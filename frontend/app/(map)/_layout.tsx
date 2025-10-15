@@ -13,7 +13,7 @@ const MapLayout = () => {
       try {
         const userData = await getProtectedData();
         console.log("User Data = ",userData);
-        setUser(userData.user);
+        setUser(userData);
       } catch (error) {
         router.replace("/(auth)/sign-in"); // Redirect on failure
       }
