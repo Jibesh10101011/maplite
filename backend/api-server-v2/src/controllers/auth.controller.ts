@@ -84,3 +84,15 @@ export const handleSignUp = asyncHandler(async(
 
 });
 
+export const getCurrentUser = asyncHandler(async (
+    request: Request, response: Response
+): Promise<void> => {
+    const user = request.user;
+    response.status(200).json(
+        new ApiResponse(
+            200,
+            user,
+            "User data is valid"
+        )
+    );
+});

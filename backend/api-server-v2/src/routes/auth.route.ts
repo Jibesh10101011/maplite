@@ -1,6 +1,11 @@
 import { Router } from "express";
-import { handleSignIn, handleSignUp } from "../controllers/auth.controller";
+import { 
+    handleSignIn, 
+    handleSignUp, 
+    getCurrentUser 
+} from "../controllers/auth.controller";
 import { validateSchema } from "../utils/validateSchema";
+import { verifyJWT } from "../middlewares/auth.middleware";
 import { 
     createUserSchema,
     loginSchema
@@ -20,6 +25,12 @@ router.route("/sign-up")
     validateSchema(createUserSchema), 
     handleSignUp,
 );
+
+router.route("/user/me")
+.get(
+    verifyJWT,
+    getCurrentUser
+)
 
 
 export default router;

@@ -6,6 +6,8 @@ export const getLocationCoordinates = async (request: Request,response: Response
 
     const { roomId } = request.params;
     const roomKeys = await redisClient.keys(`room:${roomId}:*`);
+
+    console.log(roomKeys);
     if (roomKeys.length === 0) {
         return response.status(200).json(
             new ApiResponse(

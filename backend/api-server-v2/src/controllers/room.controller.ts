@@ -69,7 +69,7 @@ export const handleValidateRoom = asyncHandler(async(
     response.status(200).json(
         new ApiResponse(
             200,
-            existRoom,
+            { success: true },
             "Room ID is valid"
         )
     );
@@ -80,10 +80,8 @@ export const getAllRooms = asyncHandler(async(
     response: Response
 ): Promise<void> => {
     const user = request.user;
-    const rooms = await Room.find({ user: user });
-    if (!rooms) {
-        throw new ApiError(500, "Internal Server Error");
-    }
+    const rooms = await Room.find({ user: user._id }).select("roomId -_id");
+    console.log("Rooms: ",rooms);
     response.status(200).json(
         new ApiResponse(
             200,
