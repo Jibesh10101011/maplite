@@ -2,7 +2,8 @@
 
 *A realtime, room‑based location sharing app with chat and AI‑powered location feedback.*
 
-![Architecture](https://github.com/user-attachments/assets/6d81e12a-14e3-4c23-a76f-62d216a37553)
+<img width="840" height="500" alt="maplite-updated-arch" src="https://github.com/user-attachments/assets/103b289c-e3b0-42fe-a0f2-f58bd9b01141" />
+
 
 ## Features
 
