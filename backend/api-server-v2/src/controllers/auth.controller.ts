@@ -1,4 +1,4 @@
-import { Request, Response, CookieOptions } from "express";
+import { type Request, type Response, type CookieOptions } from "express";
 import { CreateUserInput, LoginInput } from "../schemas/user.schema";
 import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";

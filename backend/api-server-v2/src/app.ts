@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth.route";
 import roomRouter from "./routes/room.route";
 import uploadRouter from "./routes/upload.route";
+import locationRouter from "./routes/location.route";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(cookieParser());
 app.use("/api/v2/auth", authRouter);
 app.use("/api/v2/room", roomRouter);
 app.use("/api/v2/upload", uploadRouter);
+app.use("/api/v2/location", locationRouter);
 
 app.get("/api/v2/test", (request: Request, response: Response) => {
     return response.status(200).json({

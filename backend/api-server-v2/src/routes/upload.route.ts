@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { asyncHandler } from "../utils/asyncHandler";
 import { handleUploadFile } from "../controllers/upload.controller";
 import { upload } from "../middlewares/upload.middleware";
 import { verifyJWT } from "../middlewares/auth.middleware";
