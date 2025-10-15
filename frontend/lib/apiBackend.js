@@ -2,7 +2,9 @@ import axios from "axios";
 import { router } from "expo-router";
 import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const BACKEND_URL = "http://192.168.0.101:3000";
+// const BACKEND_URL = "http://192.168.0.101:3000";
+const BACKEND_URL_V2 = "http://192.168.0.101:8000/api/v2";
+const BACKEND_STREAM_WORKER_URL = "http://192.168.0.101:5000";
 
 export async function createUser(username, email, password) {
   try {
@@ -11,8 +13,8 @@ export async function createUser(username, email, password) {
       email,
       password,
     });
-    console.log(`${BACKEND_URL}/auth/sign-up`);
-    const response = await axios.post(`${BACKEND_URL}/auth/sign-up`, {
+    console.log(`${BACKEND_URL_V2}/auth/sign-up`);
+    const response = await axios.post(`${BACKEND_URL_V2}/auth/sign-up`, {
       username,
       email,
       password,
@@ -25,17 +27,18 @@ export async function createUser(username, email, password) {
   }
 }
 
+// done
 export async function handleSignIn(email, password) {
   try {
     console.log({ email, password });
-    const response = await axios.post(`${BACKEND_URL}/auth/sign-in`, {
-      email,
-      password,
-    });
+    const response = await axios.post(
+      `${BACKEND_URL_V2}/auth/sign-in`, 
+      { email, password },
+      { withCredentials: true }
+    );
+
     console.log(response.data);
-    if (response.data.success) {
-      const { token } = response.data;
-      await AsyncStorage.setItem("token", token);
+    if (response.data.statusCode == "200") {
       console.log("Sign In successfull ", response.data);
       router.push("/(tabs)");
     } else {
@@ -52,7 +55,7 @@ export async function getProtectedData() {
     const token = await AsyncStorage.getItem("token");
     if (!token) throw new Error("No token found");
 
-    const response = await axios.get(`${BACKEND_URL}/auth/validate-token`, {
+    const response = await axios.get(`${BACKEND_URL_V2}/auth/validate-token`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -68,7 +71,7 @@ export async function getProtectedData() {
 export async function handleGenerateRoomId() {
   try {
     console.log("Handle Triggered");
-    const response = await axios.get(`${BACKEND_URL}/room/genId`);
+    const response = await axios.get(`${BACKEND_URL_V2}/room/genId`);
     console.log(response.data);
     const { roomId } = response.data;
     return roomId;
@@ -95,7 +98,7 @@ export async function handleCreateRoom(roomId) {
       return router.push(`/(tabs)/create`);
     }
 
-    const response = await axios.post(`${BACKEND_URL}/room/create`, {
+    const response = await axios.post(`${BACKEND_URL_V2}/room/create`, {
       token,
       roomId,
     });
@@ -110,7 +113,7 @@ export async function handleCreateRoom(roomId) {
 
 export async function handleValidateRoomAndJoin(roomId) {
   try {
-    const response = await axios.post(`${BACKEND_URL}/room/validate`, {
+    const response = await axios.post(`${BACKEND_URL_V2}/room/validate`, {
       roomId,
     });
     const { success } = response.data;
@@ -139,7 +142,7 @@ export async function getAllRooms(userId) {
   try {
     if (userId) {
       console.log("User ID = ", userId);
-      const response = await axios.get(`${BACKEND_URL}/room/all`, {
+      const response = await axios.get(`${BACKEND_URL_V2}/room/all`, {
         headers: { userId },
       });
       const { rooms } = response.data;
