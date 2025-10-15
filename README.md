@@ -1,6 +1,6 @@
 # MapLite – Real‑time Group Location Sharing + Chat
 
-*A realtime, room‑based location sharing app with chat and AI‑powered location feedback.*
+*A realtime, room-based location sharing app with chat and AI-powered contextual feedback. It supports secure many-to-many location sharing without storing any sensitive data on the cloud — all operations are handled via in-memory caching. Authentication is JWT-based and stateless, ensuring fast and secure microservice communication.*
 
 <img width="840" height="500" alt="maplite-updated-arch" src="https://github.com/user-attachments/assets/103b289c-e3b0-42fe-a0f2-f58bd9b01141" />
 
@@ -12,7 +12,7 @@
 * AI-powered contextual feedback about user location
 * Kafka-backed event streaming
 * Node.js WebSocket gateway
-* FastAPI OpenAI integration for location metadata
+* FastAPI Gemini integration for location metadata
 
 ## Video Demo
 
@@ -39,31 +39,18 @@ git clone REPO_URL
 ```bash
 cd frontend
 ```
-
-#### Step 3 : Set up `.env`
-
-1. Run the command: `ipconfig`
-2. Copy your **IPv4 Address**
-3. In `frontend/.env`, set:
-<img width="696" height="90" alt="need_to_edit" src="https://github.com/user-attachments/assets/0ea3df1e-420b-4bad-a987-db574da8cfaa" />
-
-```env
-BROKERS_CONNECTING_IP="<IPv4 Address>:9092"
-```
-
-#### Step 4 : Install dependencies
+#### Step 3 : Install dependencies
 
 ```bash
 npm install
 ```
-
-#### Step 5 : Run the application
+#### Step 4 : Run the application
 
 ```bash
 npx expo start
 ```
 
-#### Step 6 : Scan QR on your phone
+#### Step 5 : Scan QR on your phone
 
 Use the Expo Go App to scan the QR and launch the app.
 
@@ -84,29 +71,13 @@ Ctrl+C – Stop server
 
 ### Steps
 
-#### Step 1 : Navigate to backend directory
-
-```bash
-cd backend
-```
-
-#### Step 2 : Install dependencies
-
-```bash
-npm install
-```
-
-#### Step 3 : Start Docker
-
-Search for Docker in Windows (`Win + S`) and open it.
-
-#### Step 4 : Start Zookeeper server
+#### Step 1 : Start Zookeeper server
 
 ```bash
 docker run -p 2181:2181 zookeeper
 ```
 
-#### Step 5 : Get IPv4 Address
+#### Step 2 : Get IPv4 Address
 
 Run:
 
@@ -118,9 +89,7 @@ ipconfig
 
 Use the IPv4 address in the next step.
 
-#### Step 6 : Start Kafka
-
-## Step-8 : Start confluentinc/cp-kafka
+#### Step-3 : Start confluentinc/cp-kafka
 
 ```bash
 docker run -p 9092:9092 \
@@ -131,34 +100,49 @@ docker run -p 9092:9092 \
   -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
   confluentinc/cp-kafka:7.4.0
 ```
-
-
-Update your `backend/.env`:
-
-```env
-BROKERS_CONNECTING_IP="<IPv4 Address>:9092"
-```
-
-#### Step 7 : Start Redis server
+#### Step-4 : Start Redis server
 
 ```bash
 docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
 ```
 
-#### Step 8 : Start backend server
+#### Step-5 : Update your `backend/.env`:
+
+1. Run the command: `ipconfig`
+2. Copy your **IPv4 Address**
+3. In `frontend/.env`, set:
+
+    <img width="696" height="90" alt="need_to_edit" src="https://github.com/user-attachments/assets/0ea3df1e-420b-4bad-a987-db574da8cfaa" />
+
+  ```env
+  BROKERS_CONNECTING_IP="<IPv4 Address>:9092"
+  ```
+
+#### Step 6 : Start producer & consumer engine
 
 ```bash
-npm start
+cd stream-worker
+npm install # If not installed
+npm run build
+npm run start:producer
+npm run start:consumer
 ```
 
----
 
-## API SERVER SETUP
+#### Step 7 : Start genai-engine
+
+Install Libraries(If not installed)
 
 ```bash
-cd apiServer
-npm install
-npm start
+cd genai-engine
+python -m venv venv
+source venv/scripts/activate
+pip install -r requirements.txt
+```
+
+Start Server
+```bash
+uvicorn app.main:app --port 8001 --reload
 ```
 
 ---
