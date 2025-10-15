@@ -69,44 +69,53 @@ Ctrl+C – Stop server
 
 * Docker installed and running
 
-### Steps
+### Steps Involved for Docker Setup
 
-#### Step 1 : Start Zookeeper server
-
-```bash
-docker run -p 2181:2181 zookeeper
-```
-
-#### Step 2 : Get IPv4 Address
-
-Run:
+#### Step 1 : Use Docker Compose
 
 ```bash
-ipconfig
-```
-<img width="696" height="90" alt="need_to_edit" src="https://github.com/user-attachments/assets/0ea3df1e-420b-4bad-a987-db574da8cfaa" />
-
-
-Use the IPv4 address in the next step.
-
-#### Step-3 : Start confluentinc/cp-kafka
-
-```bash
-docker run -p 9092:9092 \
-  -e KAFKA_ZOOKEEPER_CONNECT=<IPv4 Address>:2181 \
-  -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://<IPv4 Address>:9092 \
-  -e KAFKA_LISTENER_SECURITY_PROTOCOL=PLAINTEXT \
-  -e KAFKA_LISTENER_PORT=9092 \
-  -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
-  confluentinc/cp-kafka:7.4.0
-```
-#### Step-4 : Start Redis server
-
-```bash
-docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
+docker compose up -d # Start engine
+docker compose down # Stop and remove containers
+docker compose stop # Stop containers (but keep them)
+docker compose restart # Restart containers
 ```
 
-#### Step-5 : Update your `backend/.env`:
+OR
+
+#### Manually use docker engine
+
+  - #### Step 1 : Get IPv4 Address
+    Run:
+
+    ```bash
+    ipconfig
+    ```
+    <img width="696" height="90" alt="need_to_edit" src="https://github.com/user-attachments/assets/0ea3df1e-420b-4bad-a987-db574da8cfaa" />
+
+  - #### Step 1 : Start Zookeeper server
+
+    ```bash
+    docker run -p 2181:2181 zookeeper
+    ```
+
+  - ##### Step-2 : Start confluentinc/cp-kafka
+
+    ```bash
+    docker run -p 9092:9092 \
+      -e KAFKA_ZOOKEEPER_CONNECT=<IPv4 Address>:2181 \
+      -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://<IPv4 Address>:9092 \
+      -e KAFKA_LISTENER_SECURITY_PROTOCOL=PLAINTEXT \
+      -e KAFKA_LISTENER_PORT=9092 \
+      -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
+      confluentinc/cp-kafka:7.4.0
+    ```
+  - ##### Step-3 : Start Redis server
+
+    ```bash
+    docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
+    ```
+
+##### Step-5 : Update your `backend/.env`:
 
 1. Run the command: `ipconfig`
 2. Copy your **IPv4 Address**
@@ -118,7 +127,7 @@ docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:lat
   BROKERS_CONNECTING_IP="<IPv4 Address>:9092"
   ```
 
-#### Step 6 : Start producer & consumer engine
+##### Step 6 : Start producer & consumer engine
 
 ```bash
 cd stream-worker
