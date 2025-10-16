@@ -21,7 +21,7 @@ import { BlurView } from "expo-blur";
 
 const Profile = () => {
   const [rooms, setRooms] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchRooms, setSearchedRooms] = useState<string[]>(rooms);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { width } = useWindowDimensions();
