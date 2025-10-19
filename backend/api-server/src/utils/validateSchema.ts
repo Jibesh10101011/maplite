@@ -12,6 +12,7 @@ export const validateSchema =
       });
       next();
     } catch (err: any) {
+      console.log(err);
       return res.status(400).json({ error: err.errors });
     }
   };

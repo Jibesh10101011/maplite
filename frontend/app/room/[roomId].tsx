@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import RoomTab from "@/components/RoomTab";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useId } from "react";
 import { getProtectedData } from "@/lib/apiBackend";
 import MapRoom from "@/components/MapRoom"; // Assuming this is defined
 import { LinearGradient } from "expo-linear-gradient";
@@ -24,6 +24,7 @@ import {
 } from "lucide-react-native";
 import MapRoomTest from "@/components/MapRoomTest"; // Assuming this is defined
 import Chatbot from "@/components/Chatbot"; // Assuming this is defined
+import MapShortest from "@/components/MapShortest";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -328,7 +329,11 @@ const Room = () => {
           pointerEvents={activeTab === "map" ? "auto" : "none"}
         >
           <View style={styles.tabInnerContainer}>
-            {roomId && user && <MapRoomTest roomId={roomId} username={user} />}
+            {/* {roomId && user && <MapRoomTest roomId={roomId} username={user} />} */}
+            <MapShortest 
+              roomId={roomId} 
+              userId={user} 
+            />
           </View>
         </Animated.View>
 
@@ -588,7 +593,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.03)",
     borderRadius: 24,
     overflow: "hidden", // Crucial for clipping children (like Map/Chat content)
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: "rgba(255, 255, 255, 0.08)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },

@@ -117,7 +117,6 @@ export async function handleCreateRoom(roomId) {
   }
 }
 
-
 // testing
 export async function handleValidateRoomAndJoin(roomId) {
   try {
@@ -140,7 +139,6 @@ export async function handleValidateRoomAndJoin(roomId) {
   }
 }
 
-
 // done
 export async function handleSignOut() {
   try {
@@ -156,7 +154,6 @@ export async function handleSignOut() {
   }
 }
 
-
 // done
 export async function getAllRooms() {
   try {
@@ -167,6 +164,24 @@ export async function getAllRooms() {
     });
     const rooms = response.data.data.map((ele) => ele.roomId);
     return rooms;
+  } catch (error) {
+    Alert.alert("Some Problem Occured!");
+    throw error;
+  }
+}
+
+export async function getPathCoordinate(roomId, userId, source, destination) {
+  try {
+    const response = await axios.post(
+      `http://192.168.0.101:8000/api/v2/location/shortest/path/src-dest`,
+      {  
+        roomId,
+        userId,
+        source,
+        destination,
+      }
+    );
+    return response.data.data; 
   } catch (error) {
     Alert.alert("Some Problem Occured!");
     throw error;

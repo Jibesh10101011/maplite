@@ -1,102 +1,86 @@
-// @/components/RoomTab.tsx
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { View, StyleSheet, ActivityIndicator, Text } from "react-native";
+import { GiftedChat, InputToolbar, Composer, IMessage } from "react-native-gifted-chat";
+import io, { Socket } from "socket.io-client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  StyleSheet,
-  ActivityIndicator,
-  Alert,
-  Text,
-  Platform,
-  // We don't need KeyboardAvoidingView here, GiftedChat handles it
-} from "react-native";
-import { GiftedChat, IMessage } from "react-native-gifted-chat";
-import io from "socket.io-client";
-
-// NOTE: Use the socket backend URL for the standard chat room
 const BACKEND_URL = "http://192.168.0.101:8000"; 
-const socket = io(BACKEND_URL);
 
-interface RoomTabProps {
-  roomId: string;
-  sender: string;
-}
-
-export default function RoomTab({ roomId, sender }: RoomTabProps) {
+export default function RoomTab({ roomId, sender }: { roomId: string; sender: string }) {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const socketRef = useRef<Socket | null>(null);
 
-  // Define the user object for GiftedChat
   const user = { 
     _id: 1, 
     name: sender, 
-    // Example avatar, you can replace with a dynamic image
     avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077012.png" 
   };
-  
-  // Define the receiver (other room members) user object
   const receiver = { 
     _id: 2, 
-    name: 'Other User', // Name will be overridden by the message sender, but required here
+    name: "Other User",
     avatar: "https://cdn-icons-png.flaticon.com/512/4712/4712109.png"
   };
 
   useEffect(() => {
-    // 1. Socket Setup
+    socketRef.current = io(BACKEND_URL, { transports: ["websocket"] });
+    const socket = socketRef.current;
+
     socket.emit("subscribe", roomId);
-    
-    // 2. Fetch previous messages
+
     socket.on("previous_messages", (msgs: any[]) => {
-      // Map server messages to IMessage format
-      const giftedMessages: IMessage[] = msgs.map(msg => ({
-        _id: Math.random().toString(),
+      const giftedMessages: IMessage[] = msgs.map((msg) => ({
+        _id: msg._id || Math.random().toString(),
         text: msg.message,
-        createdAt: new Date(msg.timestamp), // Assuming timestamp is available
-        user: { 
-          _id: msg.sender === sender ? 1 : 2, // 1 for current user, 2 for others
+        createdAt: new Date(msg.timestamp),
+        user: {
+          _id: msg.sender === sender ? 1 : 2,
           name: msg.sender,
+          avatar: msg.sender === sender ? user.avatar : receiver.avatar,
         },
       }));
-      setMessages((previous) => GiftedChat.append(previous, giftedMessages.reverse()));
+      setMessages(GiftedChat.append([], giftedMessages.reverse()));
       setIsLoading(false);
     });
 
-    // 3. Handle incoming live messages
     socket.on("chat_message", (newMessage: any) => {
       const giftedMessage: IMessage = {
-        _id: Math.random().toString(),
+        _id: newMessage._id || Math.random().toString(),
         text: newMessage.message,
         createdAt: new Date(),
-        user: { 
+        user: {
           _id: newMessage.sender === sender ? 1 : 2,
           name: newMessage.sender,
           avatar: newMessage.sender === sender ? user.avatar : receiver.avatar,
         },
       };
-      setMessages((previous) => GiftedChat.append(previous, [giftedMessage]));
 
+      setMessages((previous) => {
+        const exists = previous.some(
+          (m) => m.text === giftedMessage.text && m.user.name === giftedMessage.user.name
+        );
+        if (!exists) return GiftedChat.append(previous, [giftedMessage]);
+        return previous;
+      });
     });
 
-    return () => { 
-      socket.off("chat_message"); 
-      socket.off("previous_messages"); 
+    return () => {
+      socket.emit("unsubscribe", roomId);
+      socket.off("previous_messages");
+      socket.off("chat_message");
+      socket.disconnect();
     };
   }, [roomId, sender]);
 
-  // Handle sending a new message
   const onSend = useCallback((newMessages: IMessage[] = []) => {
     const messageToSend = newMessages[0];
-
-    // Update local state immediately
     setMessages((previous) => GiftedChat.append(previous, newMessages));
 
-    // Emit message to server
-    if (messageToSend && messageToSend.text) {
-      socket.emit("send_message", { 
-        roomId, 
-        sender, 
-        message: messageToSend.text, 
-        type: "string" // assuming simple text for now
+    if (messageToSend?.text) {
+      socketRef.current?.emit("send_message", {
+        roomId,
+        sender,
+        message: messageToSend.text,
+        type: "string",
       });
     }
   }, [roomId, sender]);
@@ -105,7 +89,7 @@ export default function RoomTab({ roomId, sender }: RoomTabProps) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color="#4CAF50" />
-        <Text style={{ color: '#666', marginTop: 10 }}>Connecting to room...</Text>
+        <Text style={styles.loadingText}>Connecting to room...</Text>
       </View>
     );
   }
@@ -119,9 +103,23 @@ export default function RoomTab({ roomId, sender }: RoomTabProps) {
       showUserAvatar
       alwaysShowSend
       placeholder="Type your message..."
-      isKeyboardInternallyHandled={true} 
-      minInputToolbarHeight={44}
-      bottomOffset={0} // Ensure it doesn't leave an unnecessary gap
+      renderInputToolbar={(props) => (
+        <InputToolbar
+          {...props}
+          containerStyle={styles.inputToolbarContainer}
+          primaryStyle={{ alignItems: "center" }}
+        />
+      )}
+      renderComposer={(props) => (
+        <Composer
+          {...props}
+          textInputStyle={styles.textInput}
+          placeholderTextColor="#999"
+        />
+      )}
+      isKeyboardInternallyHandled={true}
+      minInputToolbarHeight={50}
+      bottomOffset={0}
       messagesContainerStyle={styles.messagesContainer}
     />
   );
@@ -131,16 +129,34 @@ const styles = StyleSheet.create({
   center: { 
     flex: 1, 
     justifyContent: "center", 
-    alignItems: "center",
-    backgroundColor: '#F0F4F8' // Match background for a smooth transition
+    alignItems: "center", 
+    backgroundColor: "#F0F4F8",
+  },
+  loadingText: {
+    color: "#666",
+    marginTop: 10,
   },
   messagesContainer: {
-    // Add some padding if needed, but flex:1 in the parent (Room.tsx) handles the size
+    // backgroundColor: "#121214",
+  
+  },
+  inputToolbarContainer: {
+    backgroundColor: "transparent",
+    // borderTopWidth: 1,
+    // borderTopColor: "",
+    // paddingVertical: 6,
+    // paddingHorizontal: 8,
+    borderRadius: 10,
+    marginHorizontal: 2,
+    marginBottom: 4,
   },
   textInput: {
-    // Custom style to match the rest of your app's aesthetic
-    fontSize: 16,
-    color: '#333',
+    backgroundColor: "transparent",
+    // borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 20,
     paddingHorizontal: 12,
-  }
+    fontSize: 16,
+    color: "#fff",
+  },
 });

@@ -33,7 +33,7 @@ const Room: FC<RoomProps> = ({ roomId }) => {
   };
 
   return (
-    <View className="bg-white/10 rounded-2xl p-4 m-2 border border-white/20">
+    <View className="p-4 m-1">
       <TouchableOpacity
         onPress={handlePress}
         activeOpacity={0.7}
