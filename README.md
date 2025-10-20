@@ -2,8 +2,7 @@
 
 *A realtime, room-based location sharing app with chat and AI-powered contextual feedback. It supports secure many-to-many location sharing without storing any sensitive data on the cloud — all operations are handled via in-memory caching. Authentication is JWT-based and stateless, ensuring fast and secure microservice communication.*
 
-<img width="840" height="500" alt="maplite-updated-arch" src="https://github.com/user-attachments/assets/103b289c-e3b0-42fe-a0f2-f58bd9b01141" />
-
+<img width="1558" height="669" alt="Maplite-most-updated-architecture" src="https://github.com/user-attachments/assets/9d6f647c-e500-412a-85e1-abeca7d72778" />
 
 ## Features
 
