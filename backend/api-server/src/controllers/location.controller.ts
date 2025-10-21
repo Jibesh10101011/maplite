@@ -1,5 +1,5 @@
 import { type Request, type Response } from "express";
-import { type CoordinateInput } from "../schemas/location.schema";
+import { UserRoomInput, type CoordinateInput } from "../schemas/location.schema";
 import { redisClient } from "../config/redisClient";
 import { ApiResponse } from "../utils/ApiResponse";
 import axios from "axios";
@@ -46,6 +46,22 @@ export const getLocationCoordinates = asyncHandler(async (
 });
 
 
+export const shortestPathCache = asyncHandler(async (
+    request: Request<{}, {}, UserRoomInput>,
+    response: Response
+): Promise<void> => {
+    const { roomId, userId } = request.body;
+    const cacheKey = `coordinates:${roomId}:${userId}`;
+    const coordinates = await redisClient.get(cacheKey);
+    response.status(200).json(
+        new ApiResponse(
+            200,
+            coordinates ? JSON.parse(coordinates) : [],
+            "Coorinat"
+        )
+    );
+});
+
 export const getShortestPathCoordinates = asyncHandler(async (
     request: Request<{}, {}, CoordinateInput>, 
     response: Response
@@ -85,3 +101,5 @@ export const getShortestPathCoordinates = asyncHandler(async (
         throw new ApiError(500, "Internal server Error");
     }
 });
+
+
