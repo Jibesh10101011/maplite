@@ -1,12 +1,18 @@
 import { FC, useRef, useState, useEffect } from "react";
 import { View, Animated, TouchableOpacity, Text } from "react-native";
-import MapView, { LongPressEvent, MapPressEvent, Marker, Polyline, Region } from "react-native-maps";
+import MapView, {
+  LongPressEvent,
+  MapPressEvent,
+  Marker,
+  Polyline,
+  Region,
+} from "react-native-maps";
 import * as Location from "expo-location";
 import * as polyline from "@mapbox/polyline";
 import { getPathCoordinate } from "@/lib/apiBackend";
 import io, { Socket } from "socket.io-client";
 
-const BACKEND_URL = "http://192.168.0.101:8000"; 
+const BACKEND_URL = "http://192.168.0.101:8000";
 
 interface Coordinate {
   latitude: number;
@@ -14,14 +20,14 @@ interface Coordinate {
 }
 
 interface MapShortestProps {
-    roomId: string;
-    userId: string;
+  roomId: string;
+  userId: string;
 }
 
 interface CoordinateSocketData {
   roomId: string;
   userId: string;
-  routeCoordinates: [number, number][]
+  routeCoordinates: [number, number][];
 }
 
 const DESTINATION: Coordinate = {
@@ -29,19 +35,23 @@ const DESTINATION: Coordinate = {
   longitude: 88.3953,
 };
 
-
-
-
-
-const MapShortest: FC<MapShortestProps> = ({roomId, userId}) => {
-
-  console.log("Entered Room: ",roomId);
+const MapShortest: FC<MapShortestProps> = ({ roomId, userId }) => {
+  console.log("Entered Room: ", roomId);
 
   const mapRef = useRef<MapView>(null);
+  const socketRef = useRef<Socket | null>(null);
+  const locationRef = useRef<Coordinate | null>(null);
+
   const [location, setLocation] = useState<Coordinate | null>(null);
+  const [destination, setDestination] = useState<Coordinate | null>(null);
+  const [selectedCoordinate, setSelectedCoordinate] =
+    useState<Coordinate | null>(null);
   const [routeCoords, setRouteCoords] = useState<Coordinate[]>([]);
-  const [destination, setDestination] = useState<Coordinate| null>(null);
-  const [selectedCoordinate, setSelectedCoordinate] = useState<Coordinate | null>(null);
+
+  const [userRoutes, setUserRoutes] = useState<Record<string, Coordinate[]>>(
+    {}
+  );
+
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const [mapRegion, setMapRegion] = useState<Region>({
@@ -51,26 +61,58 @@ const MapShortest: FC<MapShortestProps> = ({roomId, userId}) => {
     longitudeDelta: 0.0421,
   });
 
-
-  // Socket 
-  const socketRef = useRef<Socket | null>(null);
+  // Socket
 
   useEffect(() => {
     socketRef.current = io(`${BACKEND_URL}/map`, { transports: ["websocket"] });
     const socket = socketRef.current;
-    socket.emit("subscribe", `coordinate:${roomId}`);
+    socket.emit("subscribe", `${roomId}`);
+
+    socket.on(
+      "shortest-path-coordinates-history",
+      (data: CoordinateSocketData[]) => {
+
+        console.log("History = ", data);
+
+        if (!Array.isArray(data) || data.length === 0) return;
+        setUserRoutes((prevRoutes) => {
+          const updatedRoutes: Record<string, Coordinate[]> = { ...prevRoutes };
+
+          data.forEach((ele) => {
+            if (!ele?.userId || !Array.isArray(ele.routeCoordinates)) return;
+
+            const coords = ele.routeCoordinates.map(([lng, lat]) => ({
+              latitude: lat,
+              longitude: lng,
+            }));
+
+            updatedRoutes[ele.userId] = coords;
+          });
+
+          return updatedRoutes;
+        });
+      }
+    );
 
     socket.on("shortest-path-coordinates", (data: CoordinateSocketData) => {
-      console.log("Data: ",data);
+      const { userId, routeCoordinates } = data;
+      const coords = routeCoordinates.map(([lng, lat]) => ({
+        latitude: lat,
+        longitude: lng,
+      }));
+      setUserRoutes((prev) => ({
+        ...prev,
+        [userId]: coords,
+      }));
     });
 
     return () => {
       socket.emit("unsubscribe", `coordinate:${roomId}`);
       socket.off("shortest-path-coordinates");
+      socket.off("shortest-path-coordinates-history");
       socket.disconnect();
-    }
-
-  }, [])
+    };
+  }, []);
 
   useEffect(() => {
     Animated.parallel([
@@ -104,8 +146,7 @@ const MapShortest: FC<MapShortestProps> = ({roomId, userId}) => {
         setLocation({ latitude, longitude });
 
         // fetch route for initial location
-        if(destination)
-            fetchRoute({ latitude, longitude }, destination);
+        if (destination) fetchRoute({ latitude, longitude }, destination);
 
         locationSubscription = await Location.watchPositionAsync(
           {
@@ -152,115 +193,155 @@ const MapShortest: FC<MapShortestProps> = ({roomId, userId}) => {
 
   const fetchRoute = async (source: Coordinate, destination: Coordinate) => {
     try {
-        console.log("Fetched");
-        const coordinates = await getPathCoordinate(roomId, userId, source, destination);
-        const coords = coordinates.map((coord: [number, number]) => {
-          const [lng, lat] = coord;
-          return {
-            latitude: lat,
-            longitude: lng,
-          };
-        });
-        setRouteCoords(coords);
+      console.log("Fetched");
+      const coordinates = await getPathCoordinate(
+        roomId,
+        userId,
+        source,
+        destination
+      );
+      const coords = coordinates.map((coord: [number, number]) => {
+        const [lng, lat] = coord;
+        return {
+          latitude: lat,
+          longitude: lng,
+        };
+      });
+      setRouteCoords(coords);
+      setUserRoutes((prev) => ({ ...prev, [userId]: coords }));
     } catch (error) {
       console.error("Error fetching route:", error);
     }
   };
 
-
   const handleMapPress = (event: LongPressEvent) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
-    console.log({latitude, longitude});
+    console.log({ latitude, longitude });
     setSelectedCoordinate({ latitude, longitude });
-  }
+  };
 
   const confirmDestination = () => {
     if (selectedCoordinate && location) {
-        setDestination(selectedCoordinate);
-        fetchRoute(location, selectedCoordinate);
-        setSelectedCoordinate(null);
+      setDestination(selectedCoordinate);
+      fetchRoute(location, selectedCoordinate);
+      setSelectedCoordinate(null);
     }
-  }
+  };
 
   return (
-   <View className="flex-1 bg-gray-100">
-  <Animated.View
-    style={{
-      flex: 1,
-      borderRadius: 16,
-      overflow: "hidden",
-      margin: 8,
-      opacity: fadeAnim,
-      transform: [{ translateY: slideAnim }],
-    }}
-  >
-    <MapView
-      ref={mapRef}
-      style={{ flex: 1 }}
-      initialRegion={mapRegion}
-      showsUserLocation={true}
-      showsMyLocationButton={true}
-      showsCompass={true}
-      toolbarEnabled={false}
-      onLongPress={handleMapPress}
-    >
-      {location && (
-        <Marker
-          coordinate={location}
-          title="You"
-          description={`Lat: ${location.latitude}, Long: ${location.longitude}`}
-          pinColor="red"
-        />
-      )}
-
-      {selectedCoordinate && (
-        <Marker
-          coordinate={selectedCoordinate}
-          title="Selected"
-          pinColor="orange"
-        />
-      )}
-
-      {destination && (
-        <Marker
-          coordinate={destination}
-          title="Destination"
-          pinColor="green"
-        />
-      )}
-
-      {routeCoords.length > 0 && (
-        <Polyline
-          coordinates={routeCoords}
-          strokeWidth={4}
-          strokeColor="#1E90FF"
-        />
-      )}
-    </MapView>
-
-    {/* Confirm Button */}
-    {selectedCoordinate && (
-      <TouchableOpacity
-        onPress={confirmDestination}
+    <View className="flex-1 bg-gray-100">
+      <Animated.View
         style={{
-          position: "absolute",
-          bottom: 40,
-          left: "25%",
-          right: "25%",
-          backgroundColor: "#1E40AF",
-          paddingVertical: 12,
-          borderRadius: 24,
-          zIndex: 10,
+          flex: 1,
+          borderRadius: 16,
+          overflow: "hidden",
+          margin: 8,
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }],
         }}
       >
-        <Text style={{ color: "white", textAlign: "center", fontWeight: "bold" }}>
-          Mark as Destination
-        </Text>
-      </TouchableOpacity>
-    )}
-  </Animated.View>
-</View>
+        <MapView
+          ref={mapRef}
+          style={{ flex: 1 }}
+          initialRegion={mapRegion}
+          showsUserLocation={true}
+          showsMyLocationButton={true}
+          showsCompass={true}
+          toolbarEnabled={false}
+          onLongPress={handleMapPress}
+        >
+          {location && (
+            <Marker
+              coordinate={location}
+              title="You"
+              description={`Lat: ${location.latitude}, Long: ${location.longitude}`}
+              pinColor="red"
+            />
+          )}
 
+          {destination && (
+            <Marker
+              coordinate={destination}
+              title="Destination"
+              pinColor="green"
+            />
+          )}
+
+          {selectedCoordinate && (
+            <Marker
+              coordinate={selectedCoordinate}
+              title="Selected"
+              pinColor="orange"
+            />
+          )}
+
+          {/* Render All Users’ Routes */}
+          {Object.entries(userRoutes).map(([id, coords]) =>
+            coords.length > 0 ? (
+              <Polyline
+                key={id}
+                coordinates={coords}
+                strokeWidth={4}
+                strokeColor={id === userId ? "#1E90FF" : "#32CD32"} // Current user blue, others green
+              />
+            ) : null
+          )}
+
+          {/* Start & Destination Markers for Each User */}
+          {Object.entries(userRoutes).map(([id, coords]) => {
+            if (coords.length < 2) return null;
+            const start = coords[0];
+            const end = coords[coords.length - 1];
+
+            return (
+              <>
+                <Marker
+                  key={`start-${id}`}
+                  coordinate={start}
+                  title={`${id === userId ? "Your Start" : `${id}'s Start`}`}
+                  pinColor={id === userId ? "blue" : "#006400"} // dark green for others
+                />
+                <Marker
+                  key={`end-${id}`}
+                  coordinate={end}
+                  title={`${
+                    id === userId ? "Your Destination" : `${id}'s Destination`
+                  }`}
+                  pinColor={id === userId ? "green" : "#ADFF2F"} // light green for others
+                />
+              </>
+            );
+          })}
+        </MapView>
+
+        {/* Confirm Button */}
+        {selectedCoordinate && (
+          <TouchableOpacity
+            onPress={confirmDestination}
+            style={{
+              position: "absolute",
+              bottom: 40,
+              left: "25%",
+              right: "25%",
+              backgroundColor: "#1E40AF",
+              paddingVertical: 12,
+              borderRadius: 24,
+              zIndex: 10,
+            }}
+          >
+            <Text
+              style={{
+                color: "white",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Mark as Destination
+            </Text>
+          </TouchableOpacity>
+        )}
+      </Animated.View>
+    </View>
   );
 };
 

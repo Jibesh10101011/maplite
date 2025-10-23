@@ -14,11 +14,13 @@ export async function initSubscriber(io: SocketIOServer): Promise<void> {
         if (!data) return;
         try {
             const { roomId, userId, routeCoordinates } = JSON.parse(data);
-            mapNamespace.to(`coordinate:${roomId}`).emit("shortest-path-coordinates", {
-            roomId,
-            userId,
-            routeCoordinates,
-            });
+            mapNamespace.to(`coordinate:${roomId}`).emit("shortest-path-coordinates", 
+                {
+                    roomId,
+                    userId,
+                    routeCoordinates,
+                }
+            );
         } catch (err) {
             console.error("Failed to parse Redis data:", err);
         }
