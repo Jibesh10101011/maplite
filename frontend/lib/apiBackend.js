@@ -181,7 +181,7 @@ export async function getPathCoordinate(roomId, userId, source, destination) {
         destination,
       }
     );
-    return response.data.data; 
+    return response.data.data.routeCoordinates; 
   } catch (error) {
     Alert.alert("Some Problem Occured!");
     throw error;

@@ -2,12 +2,15 @@ import { Router } from "express";
 import { 
     getLocationCoordinates, 
     getShortestPathCoordinates,
-    shortestPathCache
+    shortestPathCache,
+    testLocation
 } from "../controllers/location.controller";
 import { CoordinateSchema, UserRoomSchema } from "../schemas/location.schema";
 import { validateSchema } from "../utils/validateSchema";
 
 const router: Router = Router();
+
+router.route("/test").get(testLocation);
 
 router.route("/coordinates/:roomId")
 .get(getLocationCoordinates);

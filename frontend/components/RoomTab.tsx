@@ -22,7 +22,7 @@ export default function RoomTab({ roomId, sender }: { roomId: string; sender: st
   };
 
   useEffect(() => {
-    socketRef.current = io(BACKEND_URL, { transports: ["websocket"] });
+    socketRef.current = io(`${BACKEND_URL}/chat`, { transports: ["websocket"] });
     const socket = socketRef.current;
 
     socket.emit("subscribe", roomId);

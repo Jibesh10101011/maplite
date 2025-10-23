@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express";
 import { UserRoomInput, type CoordinateInput } from "../schemas/location.schema";
-import { redisClient } from "../config/redisClient";
+import { publisher, redisClient } from "../config/redisClient";
 import { ApiResponse } from "../utils/ApiResponse";
 import axios from "axios";
 import { asyncHandler } from "../utils/asyncHandler";
@@ -72,13 +72,13 @@ export const getShortestPathCoordinates = asyncHandler(async (
     const { source, destination, userId, roomId } = request.body;
     const cacheKey = `coordinates:${roomId}:${userId}`;
     
-    const coordinates = await redisClient.get(cacheKey);
-    if (coordinates) {
+    const data = await redisClient.get(cacheKey);
+    if (data) {
         console.log("Received from Cache");
         return response.status(200).json(
             new ApiResponse(
                 200,
-                JSON.parse(coordinates),
+                JSON.parse(data),
                 "Coordinates are successfully fetched"
             )
         );
@@ -89,17 +89,33 @@ export const getShortestPathCoordinates = asyncHandler(async (
         const OSRM_API = `https://router.project-osrm.org/route/v1/driving/${source.longitude},${source.latitude};${destination.longitude},${destination.latitude}?overview=full&geometries=geojson`;
         const responseOsrm =await axios.get(OSRM_API);
         const routeCoordinates = responseOsrm.data.routes[0].geometry.coordinates;
-        await redisClient.set(cacheKey, JSON.stringify(routeCoordinates));
+        await redisClient.set(cacheKey, JSON.stringify({routeCoordinates, roomId, userId}));
         response.status(200).json(
             new ApiResponse(
                 200,
-                routeCoordinates,
+                {routeCoordinates, roomId, userId},
                 "Coordinates are successfully fetched"
             )
-        );
+        ); 
+
+        redisClient.publish(`shortest-path:${roomId}`, cacheKey);
+
     } catch (error) {
         throw new ApiError(500, "Internal server Error");
     }
 });
 
 
+export const testLocation = asyncHandler(async (request: Request, response: Response) => {
+    await publisher.publish(`hello:${Math.random()*100}`, "Hello Jibesh");
+    console.log("Msg published");
+    response
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            {},
+            "Nice"
+        )
+    );
+});

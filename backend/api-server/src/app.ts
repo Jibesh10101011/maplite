@@ -19,7 +19,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: process.env.URL_ENCODED_LIMIT! }));
 app.use(express.static("public"));
 app.use(cookieParser());
-
 app.use("/api/v2/auth", authRouter);
 app.use("/api/v2/room", roomRouter);
 app.use("/api/v2/upload", uploadRouter);

@@ -1,6 +1,11 @@
-import { type Server as HttpServer } from "http";
-import initializeSocketServer from "./socketServer";
+import { type Server as SocketIoServer  } from "socket.io";
+import { 
+  initializeChatSocketServer, 
+  initializeMapSocketServer
+} from "./socketServer";
 
-export default function initializeSocket(server: HttpServer) {
-  return initializeSocketServer(server);
+
+export function initializeSocketHandlers(io: SocketIoServer) {
+  initializeChatSocketServer(io);
+  initializeMapSocketServer(io);
 }

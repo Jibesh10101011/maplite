@@ -4,6 +4,9 @@ import MapView, { LongPressEvent, MapPressEvent, Marker, Polyline, Region } from
 import * as Location from "expo-location";
 import * as polyline from "@mapbox/polyline";
 import { getPathCoordinate } from "@/lib/apiBackend";
+import io, { Socket } from "socket.io-client";
+
+const BACKEND_URL = "http://192.168.0.101:8000"; 
 
 interface Coordinate {
   latitude: number;
@@ -15,6 +18,12 @@ interface MapShortestProps {
     userId: string;
 }
 
+interface CoordinateSocketData {
+  roomId: string;
+  userId: string;
+  routeCoordinates: [number, number][]
+}
+
 const DESTINATION: Coordinate = {
   latitude: 26.7271,
   longitude: 88.3953,
@@ -22,7 +31,12 @@ const DESTINATION: Coordinate = {
 
 
 
+
+
 const MapShortest: FC<MapShortestProps> = ({roomId, userId}) => {
+
+  console.log("Entered Room: ",roomId);
+
   const mapRef = useRef<MapView>(null);
   const [location, setLocation] = useState<Coordinate | null>(null);
   const [routeCoords, setRouteCoords] = useState<Coordinate[]>([]);
@@ -36,6 +50,27 @@ const MapShortest: FC<MapShortestProps> = ({roomId, userId}) => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+
+
+  // Socket 
+  const socketRef = useRef<Socket | null>(null);
+
+  useEffect(() => {
+    socketRef.current = io(`${BACKEND_URL}/map`, { transports: ["websocket"] });
+    const socket = socketRef.current;
+    socket.emit("subscribe", `coordinate:${roomId}`);
+
+    socket.on("shortest-path-coordinates", (data: CoordinateSocketData) => {
+      console.log("Data: ",data);
+    });
+
+    return () => {
+      socket.emit("unsubscribe", `coordinate:${roomId}`);
+      socket.off("shortest-path-coordinates");
+      socket.disconnect();
+    }
+
+  }, [])
 
   useEffect(() => {
     Animated.parallel([
