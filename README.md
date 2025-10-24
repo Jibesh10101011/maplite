@@ -19,6 +19,61 @@ https://github.com/user-attachments/assets/a9903995-f377-44a8-a882-c4ba8ad4e02d
 
 ---
 
+## BACKEND SETUP
+
+##### Step 1: Start Docker Engine:
+```shell
+$ cd backend
+$ docker compose up -d # Start engine
+
+# Stop and remove containers
+$ docker compose down
+
+# Stop containers (but keep them)
+$ docker compose stop
+
+# Restart containers
+$ docker compose restart
+```
+
+##### Step 2: Update your `backend/.env`:
+
+1. Run the command: `ipconfig`
+2. Copy your **IPv4 Address**
+3. In `frontend/.env`, set:
+
+    <img width="696" height="90" alt="need_to_edit" src="https://github.com/user-attachments/assets/0ea3df1e-420b-4bad-a987-db574da8cfaa" />
+
+      ```env
+      BROKERS_CONNECTING_IP="<IPv4 Address>:9092"
+      ```
+
+##### Step 3 : Start producer & consumer engine
+
+```shell
+$ cd stream-worker
+$ npm install # If not installed
+$ npm run build
+$ npm run start:producer
+$ npm run start:consumer
+```
+
+
+#### Step 4 : Start genai-engine
+
+Install Libraries(If not installed)
+
+```shell
+$ cd genai-engine
+$ python -m venv venv
+$ source venv/scripts/activate
+$ pip install -r requirements.txt # If not installed
+$ uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
+
+```
+
+---
+
 ## FRONTEND SETUP
 
 ### Prerequisites
@@ -27,29 +82,15 @@ https://github.com/user-attachments/assets/a9903995-f377-44a8-a882-c4ba8ad4e02d
 
 ### Steps
 
-#### Step 1 : Clone the Repo
+#### Step 1 : Start Frontend
 
-```bash
-git clone REPO_URL
+```shell
+$ cd frontend
+$ npm install # If not installed
+$ npx expo start
 ```
 
-#### Step 2 : Navigate to frontend directory
-
-```bash
-cd frontend
-```
-#### Step 3 : Install dependencies
-
-```bash
-npm install
-```
-#### Step 4 : Run the application
-
-```bash
-npx expo start
-```
-
-#### Step 5 : Scan QR on your phone
+#### Step 3 : Scan QR on your phone
 
 Use the Expo Go App to scan the QR and launch the app.
 
@@ -62,110 +103,6 @@ Ctrl+C – Stop server
 
 ---
 
-## BACKEND SETUP
-
-### Prerequisites
-
-* Docker installed and running
-
-### Steps Involved for Docker Setup
-
-#### Step 1 : Use Docker Compose
-
-```bash
-docker compose up -d # Start engine
-docker compose down # Stop and remove containers
-docker compose stop # Stop containers (but keep them)
-docker compose restart # Restart containers
-```
-
-OR
-
-#### Manually use docker engine
-
-  - #### Step 1 : Get IPv4 Address
-    Run:
-
-    ```bash
-    ipconfig
-    ```
-    <img width="696" height="90" alt="need_to_edit" src="https://github.com/user-attachments/assets/0ea3df1e-420b-4bad-a987-db574da8cfaa" />
-
-  - #### Step 1 : Start Zookeeper server
-
-    ```bash
-    docker run -p 2181:2181 zookeeper
-    ```
-
-  - ##### Step-2 : Start confluentinc/cp-kafka
-
-    ```bash
-    docker run -p 9092:9092 \
-      -e KAFKA_ZOOKEEPER_CONNECT=<IPv4 Address>:2181 \
-      -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://<IPv4 Address>:9092 \
-      -e KAFKA_LISTENER_SECURITY_PROTOCOL=PLAINTEXT \
-      -e KAFKA_LISTENER_PORT=9092 \
-      -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
-      confluentinc/cp-kafka:7.4.0
-    ```
-  - ##### Step-3 : Start Redis server
-
-    ```bash
-    docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
-    ```
-
-##### Step-5 : Update your `backend/.env`:
-
-1. Run the command: `ipconfig`
-2. Copy your **IPv4 Address**
-3. In `frontend/.env`, set:
-
-    <img width="696" height="90" alt="need_to_edit" src="https://github.com/user-attachments/assets/0ea3df1e-420b-4bad-a987-db574da8cfaa" />
-
-  ```env
-  BROKERS_CONNECTING_IP="<IPv4 Address>:9092"
-  ```
-
-##### Step 6 : Start producer & consumer engine
-
-```bash
-cd stream-worker
-npm install # If not installed
-npm run build
-npm run start:producer
-npm run start:consumer
-```
-
-
-#### Step 7 : Start genai-engine
-
-Install Libraries(If not installed)
-
-```bash
-cd genai-engine
-python -m venv venv
-source venv/scripts/activate
-pip install -r requirements.txt
-```
-
-Start Server
-```bash
-uvicorn app.main:app --port 8001 --reload
-```
-
----
-
-## Docker Frontend Setup (Optional)
-
-```bash
-docker run --rm -it --network="bridge" \
-  -p 8081:8081 -p 19000:19000 -p 19001:19001 -p 19002:19002 \
-  -e REACT_NATIVE_PACKAGER_HOSTNAME=<IPv4 Address> \
-  -v "D:\Data\mapelite-test\maplite\frontend:/app" \
-  <your-image> npx expo start --host lan
-```
-
----
 
 ## CONTRIBUTION GUIDELINES
 
