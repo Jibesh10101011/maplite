@@ -1,6 +1,6 @@
 # MapLite – Real‑time Group Location Sharing + Chat
 
-*A realtime, room-based location sharing app with chat and AI-powered contextual feedback. It supports secure many-to-many location sharing without storing any sensitive data on the cloud — all operations are handled via in-memory caching. Authentication is JWT-based and stateless, ensuring fast and secure microservice communication.*
+*A realtime, room-based location sharing app with chat and AI-powered contextual feedback. It supports secure many-to-many location sharing without storing any sensitive data on the cloud all operations are handled via in-memory caching. Authentication is JWT-based and stateless, ensuring fast and secure microservice communication.*
 
 <img width="1558" height="669" alt="Maplite-most-updated-architecture" src="https://github.com/user-attachments/assets/9d6f647c-e500-412a-85e1-abeca7d72778" />
 
@@ -40,7 +40,6 @@ $ docker compose restart
 
 1. Run the command: `ipconfig`
 2. Copy your **IPv4 Address**
-3. In `frontend/.env`, set:
 
     <img width="696" height="90" alt="need_to_edit" src="https://github.com/user-attachments/assets/0ea3df1e-420b-4bad-a987-db574da8cfaa" />
 
@@ -102,27 +101,5 @@ Ctrl+C – Stop server
 ```
 
 ---
-
-
-## CONTRIBUTION GUIDELINES
-
-1. Create a Fork
-
-![Fork Screenshot](https://github.com/user-attachments/assets/f216e854-db60-4e13-ac9c-efdda0549e6f)
-
-2. Create an Issue and submit a Pull Request (PR)
-
----
-
-## Architecture Flow Summary
-
-1. **Users** share messages and coordinates → **Node.js** (via WebSocket)
-2. **Node.js** produces messages to Kafka topics
-3. **Kafka** acts as the messaging backbone
-4. **FastAPI** consumes coordinates and fetches enriched feedback via **OpenAI**
-5. **FastAPI** produces AI feedback → **Kafka** → **Node.js** → **Clients**
-
----
-
 *For any queries or suggestions, feel free to open an issue.*
 
