@@ -30,10 +30,31 @@ interface CoordinateSocketData {
   routeCoordinates: [number, number][];
 }
 
+interface UserCoordinate {
+  userId: string;
+  latitude: number;
+  longitude: number;
+}
+
 const DESTINATION: Coordinate = {
   latitude: 26.7271,
   longitude: 88.3953,
 };
+
+
+const colors = [
+  "#FF5733",
+  "#33B5E5",
+  "#9C27B0",
+  "#4CAF50",
+  "#FFC107",
+  "#E91E63",
+  "#00BCD4",
+  "#8BC34A",
+  "#FF9800",
+  "#3F51B5"
+];
+
 
 const MapShortest: FC<MapShortestProps> = ({ roomId, userId }) => {
   console.log("Entered Room: ", roomId);
@@ -44,6 +65,9 @@ const MapShortest: FC<MapShortestProps> = ({ roomId, userId }) => {
 
   const [location, setLocation] = useState<Coordinate | null>(null);
   const [destination, setDestination] = useState<Coordinate | null>(null);
+  const [liveUsers, setLiveUsers] =  useState<Record<string, Coordinate>>(
+    {}
+  );
   const [selectedCoordinate, setSelectedCoordinate] =
     useState<Coordinate | null>(null);
   const [routeCoords, setRouteCoords] = useState<Coordinate[]>([]);
@@ -106,6 +130,17 @@ const MapShortest: FC<MapShortestProps> = ({ roomId, userId }) => {
       }));
     });
 
+    socket.on("current_location", (data: UserCoordinate) => {
+      const { userId, latitude, longitude } = data;
+      setLiveUsers((userMap) => {
+        const updatedUserMap: Record<string, Coordinate> = { ...userMap };
+        updatedUserMap[userId] = { latitude, longitude };
+        return updatedUserMap;
+      })
+    });
+
+
+
     return () => {
       socket.emit("unsubscribe", `coordinate:${roomId}`);
       socket.off("shortest-path-coordinates");
@@ -144,10 +179,6 @@ const MapShortest: FC<MapShortestProps> = ({ roomId, userId }) => {
         const initialLocation = await Location.getCurrentPositionAsync({});
         const { latitude, longitude } = initialLocation.coords;
         setLocation({ latitude, longitude });
-
-        // fetch route for initial location
-        if (destination) fetchRoute({ latitude, longitude }, destination);
-
         locationSubscription = await Location.watchPositionAsync(
           {
             accuracy: Location.Accuracy.High,
@@ -175,6 +206,19 @@ const MapShortest: FC<MapShortestProps> = ({ roomId, userId }) => {
               },
               1000
             );
+
+            if (socketRef.current) {
+              const socket = socketRef.current;
+              socket.emit("current_user_location",
+                { 
+                  latitude: roundedLat, 
+                  longitude: roundedLng,
+                  userId,
+                  roomId
+                }
+              )
+            }
+
           }
         );
       } catch (error) {
@@ -287,20 +331,25 @@ const MapShortest: FC<MapShortestProps> = ({ roomId, userId }) => {
             ) : null
           )}
 
+          {/* Live Users */}
+          {Object.entries(liveUsers).map(([user, coordinate]) => <>
+            {user != userId ?
+            <Marker
+              key={`live-${user}`}
+              coordinate={coordinate}
+              title={`${userId}`}
+              pinColor={colors[Math.floor(Math.random() * 10)]}
+            />
+            : <></> }
+          </>)}
+
           {/* Start & Destination Markers for Each User */}
           {Object.entries(userRoutes).map(([id, coords]) => {
             if (coords.length < 2) return null;
-            const start = coords[0];
             const end = coords[coords.length - 1];
 
             return (
               <>
-                <Marker
-                  key={`start-${id}`}
-                  coordinate={start}
-                  title={`${id === userId ? "Your Start" : `${id}'s Start`}`}
-                  pinColor={id === userId ? "blue" : "#006400"} // dark green for others
-                />
                 <Marker
                   key={`end-${id}`}
                   coordinate={end}

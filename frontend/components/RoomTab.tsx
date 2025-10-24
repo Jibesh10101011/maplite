@@ -18,7 +18,7 @@ export default function RoomTab({ roomId, sender }: { roomId: string; sender: st
   const receiver = { 
     _id: 2, 
     name: "Other User",
-    avatar: "https://cdn-icons-png.flaticon.com/512/4712/4712109.png"
+    avatar: "https://cdn-icons-png.flaticon.com/512/1077/1077012.png"
   };
 
   useEffect(() => {

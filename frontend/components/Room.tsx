@@ -1,30 +1,38 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Alert,
+  Modal,
+} from "react-native";
 import React, { FC, useState } from "react";
 import { Icons } from "@/constants/icons";
 import { router } from "expo-router";
+import { Entypo } from "@expo/vector-icons";
 
 interface RoomProps {
   roomId: string;
+  onDelete?: (roomId: string) => void; // optional callback for delete
 }
 
-const Room: FC<RoomProps> = ({ roomId }) => {
+const Room: FC<RoomProps> = ({ roomId, onDelete }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [menuVisible, setMenuVisible] = useState<boolean>(false);
 
   const handlePress = async () => {
     try {
       setIsLoading(true);
       console.log("Navigating to room:", roomId);
-      
-      // Test if the route exists
+
       router.push(`/room/${roomId}`);
-      
-      // If navigation fails, this will execute
+
       setTimeout(() => {
         if (!isLoading) return;
         setIsLoading(false);
         Alert.alert("Navigation Error", `Could not navigate to room: ${roomId}`);
       }, 2000);
-      
     } catch (error) {
       setIsLoading(false);
       console.error("Navigation error:", error);
@@ -32,8 +40,36 @@ const Room: FC<RoomProps> = ({ roomId }) => {
     }
   };
 
+  const handleDelete = () => {
+    Alert.alert(
+      "Delete Room",
+      `Are you sure you want to delete room "${roomId}"?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            onDelete?.(roomId);
+            setMenuVisible(false);
+          },
+        },
+      ]
+    );
+  };
+
   return (
-    <View className="p-4 m-1">
+    <View className="p-4 m-1 rounded-xl relative">
+      {/* 3-dot menu button */}
+      <TouchableOpacity
+        onPress={() => setMenuVisible(true)}
+        style={{ position: "absolute", top: 10, right: 10, zIndex: 10 }}
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+      >
+        <Entypo name="dots-three-vertical" size={18} color="#bbb" />
+      </TouchableOpacity>
+
+      {/* Room content */}
       <TouchableOpacity
         onPress={handlePress}
         activeOpacity={0.7}
@@ -55,8 +91,55 @@ const Room: FC<RoomProps> = ({ roomId }) => {
           Tap to enter
         </Text>
       </TouchableOpacity>
+
+      {/* Popup menu */}
+      <Modal
+        transparent
+        visible={menuVisible}
+        animationType="fade"
+        onRequestClose={() => setMenuVisible(false)}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          onPressOut={() => setMenuVisible(false)}
+          style={styles.modalOverlay}
+        >
+          <View style={styles.menuBox}>
+            <TouchableOpacity
+              onPress={handleDelete}
+              style={styles.menuItem}
+            >
+              <Text style={styles.menuText}>Delete Room</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 };
 
 export default Room;
+
+const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  menuBox: {
+    backgroundColor: "#2C2C2C",
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    minWidth: 160,
+  },
+  menuItem: {
+    paddingVertical: 10,
+  },
+  menuText: {
+    color: "#ff6666",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+});

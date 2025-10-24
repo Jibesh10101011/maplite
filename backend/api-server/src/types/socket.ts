@@ -6,10 +6,17 @@ export interface ChatMessage {
 }
 
 export interface ReceivedMessage {
-    roomId: string; 
-    message: string; 
-    sender: string; 
-    type: string
+  roomId: string; 
+  message: string; 
+  sender: string; 
+  type: string
+}
+
+export interface RecivedCoordinateData {
+  roomId: string;
+  userId: string;
+  latitude: number;
+  longitude: number;
 }
 
 

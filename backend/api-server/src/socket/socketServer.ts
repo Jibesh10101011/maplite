@@ -1,6 +1,10 @@
 import { Server as SocketIoServer, type Socket } from "socket.io";
 import { redisClient } from "../config/redisClient";
-import { ChatMessage, ReceivedMessage } from "../types/socket";
+import {
+  ChatMessage,
+  ReceivedMessage,
+  RecivedCoordinateData,
+} from "../types/socket";
 
 export function initializeChatSocketServer(io: SocketIoServer) {
   const chatNamespace = io.of("/chat");
@@ -43,7 +47,7 @@ export function initializeChatSocketServer(io: SocketIoServer) {
         await redisClient.ltrim(`chat:${roomId}`, -50, -1);
 
         console.log(`Message saved to ${roomId}:`, newMessage);
-        io.to(roomId).emit("chat_message", newMessage);
+        chatNamespace.to(roomId).emit("chat_message", newMessage);
       } catch (err) {
         console.error("Error saving message:", err);
       }
@@ -71,7 +75,7 @@ export function initializeMapSocketServer(io: SocketIoServer) {
           `coordinates:${roomId}:*`
         );
         if (roomCoordinateKeys.length == 0) return;
-        
+
         const allUserData = (
           await Promise.all(
             roomCoordinateKeys.map(async (key) => {
@@ -93,6 +97,13 @@ export function initializeMapSocketServer(io: SocketIoServer) {
       } catch (error) {
         console.error("Error fetching user history: ", error);
       }
+    });
+
+    socket.on("current_user_location", async (data: RecivedCoordinateData) => {
+      const { roomId, userId, latitude, longitude } = data;
+      mapNamespace
+        .to(`coordinate:${roomId}`)
+        .emit("current_location", { userId, latitude, longitude });
     });
 
     socket.on("disconnect", () => {
