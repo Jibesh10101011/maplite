@@ -115,6 +115,12 @@ uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
 
 ---
 
+## 📄 License
+
+Apache License 2.0 . See [LICENSE](LICENSE).
+
+---
+
 ## 🧑‍💻 Contributing
 
 We welcome contributions! Feel free to [open an issue](https://github.com/Jibesh10101011/maplite/issues) for bug reports, feature requests, or feedback.
