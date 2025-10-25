@@ -3,8 +3,16 @@
 **MapLite** is the ultimate solution for secure, real‑time group location sharing, chat, and AI-powered feedback. Built with privacy at its core, MapLite enables many-to-many location sharing and messaging in dynamic rooms—without persisting sensitive data on the cloud. All operations are handled in-memory, leveraging stateless JWT authentication for lightning-fast, secure microservice communication.
 
 <p align="center">
-  <img width="900" alt="MapLite Architecture" src="https://github.com/user-attachments/assets/9d6f647c-e500-412a-85e1-abeca7d72778" />
+<img width="900" alt="MapLite Architecture" src="https://github.com/user-attachments/assets/9d6f647c-e500-412a-85e1-abeca7d72778" />
 </p>
+
+[![Apache License 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE) [![Expo](https://img.shields.io/badge/Expo-Go-blue?logo=expo)](https://expo.dev/go)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-yellow?logo=python)](https://www.python.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green?logo=node.js)](https://nodejs.org/)
+[![Kafka](https://img.shields.io/badge/Apache%20Kafka-Streaming-orange?logo=apache-kafka)](https://kafka.apache.org/)
+[![WebSocket](https://img.shields.io/badge/WebSocket-Realtime-blue?logo=websocket)](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Python-green?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Gemini AI](https://img.shields.io/badge/Gemini-AI-brightgreen?logo=googlecloud)](https://cloud.google.com/vertex-ai/docs/generative-ai/learn/models)
 
 ---
 
@@ -110,12 +118,6 @@ uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
 ## 🧑‍💻 Contributing
 
 We welcome contributions! Feel free to [open an issue](https://github.com/Jibesh10101011/maplite/issues) for bug reports, feature requests, or feedback.
-
----
-
-## 📄 License
-
-MIT License. See [LICENSE](LICENSE).
 
 ---
 
