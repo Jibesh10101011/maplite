@@ -29,7 +29,7 @@
 
 ---
 
-## 🎬 Demo
+## Demo
 <div align="center">
 
 [![Watch the Demo](https://img.shields.io/badge/Video-Demo-blue?logo=youtube)](https://github.com/user-attachments/assets/b77ac67f-c886-4195-ae79-71a7ed132dea)
@@ -39,7 +39,7 @@
 ---
 
 
-## 🛠️ Backend Setup
+## Backend Setup
 
 ### 1️⃣ Start Docker Engine
 
@@ -90,7 +90,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
 
 ---
 
-## 🎨 Frontend Setup
+## Frontend Setup
 
 ### Prerequisites
 
