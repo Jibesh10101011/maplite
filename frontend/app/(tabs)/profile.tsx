@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Room from "@/components/Room";
-import { getAllRooms, getProtectedData } from "@/lib/apiBackend";
+import { deleteRoom, getAllRooms, getProtectedData } from "@/lib/apiBackend";
 import { Link, router } from "expo-router";
 import SearchInput from "@/components/SearchInput";
 import { useIsFocused } from "@react-navigation/native";
@@ -93,6 +93,14 @@ const Profile = () => {
     if (isFocused && userId) getRoomData();
   }, [isFocused, userId]);
 
+  const handleDeleteRoom = async (roomId: string) => {
+    const isDeleted = await deleteRoom(roomId)
+    if (isDeleted) {
+      setRooms(rooms.filter(room => room != roomId));
+      setSearchedRooms(prev => prev.filter(room => room !== roomId));
+    }
+  }
+
   const EmptyState = () => (
     <Animated.View
       className="flex-1 justify-center items-center px-10"
@@ -120,7 +128,7 @@ const Profile = () => {
     </Animated.View>
   );
 
-  const RoomCard = ({ item }: { item: string }) => (
+  const RoomCard = ({ item, onDelete }: { item: string, onDelete: (roomId: string) => void }) => (
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={() => console.log("RoomCard pressed:", item)}
@@ -138,7 +146,7 @@ const Profile = () => {
           className="rounded-2xl overflow-hidden"
         >
           <View className="absolute inset-0 bg-black/10" />
-          <Room roomId={item} />
+          <Room roomId={item} onDelete={onDelete} />
         </LinearGradient>
       </Animated.View>
     </TouchableOpacity>
@@ -211,7 +219,7 @@ const Profile = () => {
         ) : searchRooms.length ? (
           <FlatList
             data={searchRooms}
-            renderItem={({ item }) => <RoomCard item={item} />}
+            renderItem={({ item }) => <RoomCard item={item} onDelete={handleDeleteRoom} />}
             key={numColumns}
             keyExtractor={(item, index) => index.toString()}
             numColumns={numColumns}

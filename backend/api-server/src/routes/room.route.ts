@@ -10,7 +10,8 @@ import { verifyJWT } from "../middlewares/auth.middleware";
 import { validateSchema } from "../utils/validateSchema";
 import { 
     createRoomSchema,
-    validateRoomSchema
+    validateRoomSchema,
+    deleteRoomSchema
 } from "../schemas/room.schema";
 
 const router: Router = Router();

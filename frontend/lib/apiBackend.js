@@ -158,7 +158,6 @@ export async function handleSignOut() {
 export async function getAllRooms() {
   try {
     const token = await AsyncStorage.getItem("accessToken");
-    console.log("Token = ", token);
     const response = await axios.get(`${BACKEND_URL_V2}/room/all`, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -167,6 +166,23 @@ export async function getAllRooms() {
   } catch (error) {
     Alert.alert("Some Problem Occured!");
     throw error;
+  }
+}
+
+export async function deleteRoom(roomId) {
+  try {
+    const token = await AsyncStorage.getItem("accessToken");
+    const response = await axios.delete(`${BACKEND_URL_V2}/room/delete/${roomId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (response.data.statusCode == "200") {
+      return true;
+    } 
+    return false;
+  } catch (error) {
+    Alert.alert("Unable to delete room");
+    return false;
   }
 }
 
