@@ -30,8 +30,11 @@
 ---
 
 ## 🎬 Demo
+<div align="center">
 
 [![Watch the Demo](https://img.shields.io/badge/Video-Demo-blue?logo=youtube)](https://github.com/user-attachments/assets/b77ac67f-c886-4195-ae79-71a7ed132dea)
+
+</div>
 
 ---
 
