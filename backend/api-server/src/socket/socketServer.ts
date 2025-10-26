@@ -101,6 +101,7 @@ export function initializeMapSocketServer(io: SocketIoServer) {
 
     socket.on("current_user_location", async (data: RecivedCoordinateData) => {
       const { roomId, userId, latitude, longitude } = data;
+      console.log(data)
       mapNamespace
         .to(`coordinate:${roomId}`)
         .emit("current_location", { userId, latitude, longitude });

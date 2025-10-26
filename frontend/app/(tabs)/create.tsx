@@ -19,6 +19,7 @@ import { getProtectedData, handleCreateRoom, handleGenerateRoomId, handleSignIn,
 import Dialog from "@/components/Dialog";
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
+import { nanoid } from "nanoid/non-secure";
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -101,7 +102,8 @@ const Create = () => {
   const generateRoomId = async () => {
     try {
       setIsCreating({ ...isCreating, generating: true });
-      const generatedRoomId = await handleGenerateRoomId();
+      const generatedRoomId = `${nanoid(8)}`;
+      console.log("Generated Room ID: ", generatedRoomId);
       setRoomId(generatedRoomId);
       setIsCreating({ ...isCreating, generating: false });
     } catch (error) {

@@ -337,7 +337,7 @@ const MapShortest: FC<MapShortestProps> = ({ roomId, userId }) => {
             <Marker
               key={`live-${user}`}
               coordinate={coordinate}
-              title={`${userId}`}
+              title={`${user}`}
               pinColor={colors[Math.floor(Math.random() * 10)]}
             />
             : <></> }
