@@ -31,9 +31,10 @@
 
 ## 🎬 Demo
 
-[![Watch the Demo](https://img.shields.io/badge/Video-Demo-blue?logo=youtube)](https://github.com/user-attachments/assets/a9903995-f377-44a8-a882-c4ba8ad4e02d)
+[![Watch the Demo](https://img.shields.io/badge/Video-Demo-blue?logo=youtube)](https://github.com/user-attachments/assets/b77ac67f-c886-4195-ae79-71a7ed132dea)
 
 ---
+
 
 ## 🛠️ Backend Setup
 
