@@ -32,7 +32,7 @@
 ## Demo
 <div align="center">
 
-[![Watch the Demo](https://img.shields.io/badge/Video-Demo-blue?logo=youtube)](https://github.com/user-attachments/assets/b77ac67f-c886-4195-ae79-71a7ed132dea)
+[![Watch the Demo](https://img.shields.io/badge/Video-Demo-blue?logo=youtube)](https://github.com/user-attachments/assets/a21ce8f9-bfe0-4be0-9101-527cbef6c858)
 
 </div>
 
