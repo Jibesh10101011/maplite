@@ -7,7 +7,7 @@ import { connectDatabase } from "./database";
 import { 
   initializeSocketHandlers
 } from "./socket";
-import { initSubscriber } from "./redis/subscriber";
+import { initLocationSubscriber, initSubscriber } from "./redis/subscriber";
 import { Server as SocketIoServer } from "socket.io";
 
 const PORT = process.env.PORT!;
@@ -27,6 +27,7 @@ const startServer = async() => {
     initializeSocketHandlers(io);
 
     await initSubscriber(io);
+    await initLocationSubscriber(io);
     await connectDatabase();
     server.listen(PORT, () => {
       console.log(`Server is running at port: ${PORT}`);

@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express";
 import { UserRoomInput, type CoordinateInput } from "../schemas/location.schema";
-import { publisher, redisClient } from "../config/redisClient";
+import { publisher, redisClient } from "../config/redis.client";
 import { ApiResponse } from "../utils/ApiResponse";
 import axios from "axios";
 import { asyncHandler } from "../utils/asyncHandler";
@@ -72,17 +72,17 @@ export const getShortestPathCoordinates = asyncHandler(async (
     const { source, destination, userId, roomId } = request.body;
     const cacheKey = `coordinates:${roomId}:${userId}`;
     
-    const data = await redisClient.get(cacheKey);
-    if (data) {
-        console.log("Received from Cache");
-        return response.status(200).json(
-            new ApiResponse(
-                200,
-                JSON.parse(data),
-                "Coordinates are successfully fetched"
-            )
-        );
-    }
+    // const data = await redisClient.get(cacheKey);
+    // if (data) {
+    //     console.log("Received from Cache");
+    //     return response.status(200).json(
+    //         new ApiResponse(
+    //             200,
+    //             JSON.parse(data),
+    //             "Coordinates are successfully fetched"
+    //         )
+    //     );
+    // }
 
     console.log("API Invoked");
     try {

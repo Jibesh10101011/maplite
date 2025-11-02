@@ -41,7 +41,6 @@ const DESTINATION: Coordinate = {
   longitude: 88.3953,
 };
 
-
 const colors = [
   "#FF5733",
   "#33B5E5",
@@ -52,9 +51,10 @@ const colors = [
   "#00BCD4",
   "#8BC34A",
   "#FF9800",
-  "#3F51B5"
+  "#3F51B5",
 ];
 
+const BACKEND_STREAM_URL = "http://192.168.0.101:5000";
 
 const MapShortest: FC<MapShortestProps> = ({ roomId, userId }) => {
   console.log("Entered Room: ", roomId);
@@ -62,12 +62,11 @@ const MapShortest: FC<MapShortestProps> = ({ roomId, userId }) => {
   const mapRef = useRef<MapView>(null);
   const socketRef = useRef<Socket | null>(null);
   const locationRef = useRef<Coordinate | null>(null);
+  const socketLocationRef = useRef<Socket | null>(null);
 
   const [location, setLocation] = useState<Coordinate | null>(null);
   const [destination, setDestination] = useState<Coordinate | null>(null);
-  const [liveUsers, setLiveUsers] =  useState<Record<string, Coordinate>>(
-    {}
-  );
+  const [liveUsers, setLiveUsers] = useState<Record<string, Coordinate>>({});
   const [selectedCoordinate, setSelectedCoordinate] =
     useState<Coordinate | null>(null);
   const [routeCoords, setRouteCoords] = useState<Coordinate[]>([]);
@@ -95,7 +94,6 @@ const MapShortest: FC<MapShortestProps> = ({ roomId, userId }) => {
     socket.on(
       "shortest-path-coordinates-history",
       (data: CoordinateSocketData[]) => {
-
         console.log("History = ", data);
 
         if (!Array.isArray(data) || data.length === 0) return;
@@ -136,10 +134,8 @@ const MapShortest: FC<MapShortestProps> = ({ roomId, userId }) => {
         const updatedUserMap: Record<string, Coordinate> = { ...userMap };
         updatedUserMap[userId] = { latitude, longitude };
         return updatedUserMap;
-      })
+      });
     });
-
-
 
     return () => {
       socket.emit("unsubscribe", `coordinate:${roomId}`);
@@ -147,6 +143,18 @@ const MapShortest: FC<MapShortestProps> = ({ roomId, userId }) => {
       socket.off("shortest-path-coordinates-history");
       socket.disconnect();
     };
+  }, []);
+
+  useEffect(() => {
+    socketLocationRef.current = io(`${BACKEND_STREAM_URL}/map`, {
+      transports: ["websocket"],
+    });
+
+    const socket = socketLocationRef.current;
+
+    return () => {
+      socket.disconnect();
+    }
   }, []);
 
   useEffect(() => {
@@ -207,18 +215,16 @@ const MapShortest: FC<MapShortestProps> = ({ roomId, userId }) => {
               1000
             );
 
-            if (socketRef.current) {
-              const socket = socketRef.current;
-              socket.emit("current_user_location",
-                { 
-                  latitude: roundedLat, 
-                  longitude: roundedLng,
-                  userId,
-                  roomId
-                }
-              )
+            // socketRef Stream
+            if (socketLocationRef.current) {
+              const socket = socketLocationRef.current;
+              socket.emit("send_location", {
+                latitude: roundedLat,
+                longitude: roundedLng,
+                userId,
+                roomId,
+              });
             }
-
           }
         );
       } catch (error) {
@@ -332,16 +338,20 @@ const MapShortest: FC<MapShortestProps> = ({ roomId, userId }) => {
           )}
 
           {/* Live Users */}
-          {Object.entries(liveUsers).map(([user, coordinate]) => <>
-            {user != userId ?
-            <Marker
-              key={`live-${user}`}
-              coordinate={coordinate}
-              title={`${user}`}
-              pinColor={colors[Math.floor(Math.random() * 10)]}
-            />
-            : <></> }
-          </>)}
+          {Object.entries(liveUsers).map(([user, coordinate]) => (
+            <>
+              {user != userId ? (
+                <Marker
+                  key={`live-${user}`}
+                  coordinate={coordinate}
+                  title={`${user}`}
+                  pinColor={colors[Math.floor(Math.random() * 10)]}
+                />
+              ) : (
+                <></>
+              )}
+            </>
+          ))}
 
           {/* Start & Destination Markers for Each User */}
           {Object.entries(userRoutes).map(([id, coords]) => {
