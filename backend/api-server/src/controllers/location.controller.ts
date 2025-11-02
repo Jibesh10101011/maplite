@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express";
 import { UserRoomInput, type CoordinateInput } from "../schemas/location.schema";
-import { publisher, redisClient } from "../config/redisClient";
+import { publisher, redisClient } from "../config/redis.client";
 import { ApiResponse } from "../utils/ApiResponse";
 import axios from "axios";
 import { asyncHandler } from "../utils/asyncHandler";

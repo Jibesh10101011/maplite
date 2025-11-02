@@ -1,5 +1,5 @@
 import { Server as SocketIoServer, type Socket } from "socket.io";
-import { redisClient } from "../config/redisClient";
+import { redisClient } from "../config/redis.client";
 import {
   ChatMessage,
   ReceivedMessage,

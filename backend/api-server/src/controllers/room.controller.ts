@@ -5,7 +5,7 @@ import { ApiError } from "../utils/ApiError";
 import { CreateRoomInput, DeleteRoomInput, ValidateRoomInput } from "../schemas/room.schema";
 import { Room } from "../models/room.model";
 import { uuid } from "uuidv4";
-import { redisClient } from "../config/redisClient";
+import { redisClient } from "../config/redis.client";
 
 export const handleGenerateRoomId = asyncHandler(
   async (request: Request, response: Response): Promise<void> => {

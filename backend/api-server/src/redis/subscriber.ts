@@ -1,5 +1,5 @@
-import { subscriber } from "../config/redisClient";
-import { redisClient } from "../config/redisClient";
+import { subscriber } from "../config/redis.client";
+import { redisClient } from "../config/redis.client";
 import { Server as SocketIOServer } from "socket.io";
 
 export async function initSubscriber(io: SocketIOServer): Promise<void> {
