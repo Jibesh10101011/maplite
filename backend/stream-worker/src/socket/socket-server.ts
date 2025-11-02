@@ -9,8 +9,10 @@ export function initializeMapSocketServer(io: SocketIoServer) {
   const mapNamespace = io.of("/map");
   mapNamespace.on("connection", (socket: Socket) => {
     console.log("Map: new client connected");   
-    socket.on("receive_location", async (data: RecivedCoordinateData) => {
+    socket.on("send_location", async (data: RecivedCoordinateData) => {
         try {
+
+            console.log("Data accepted: ", data);
             const producer = await connectProducer();      
             await producer.send({
                 topic: "location-topic",

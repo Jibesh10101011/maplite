@@ -11,32 +11,20 @@ export const connectConsumer = async (): Promise<void> => {
     await consumer.subscribe({ topic: "location-topic", fromBeginning: false });
 
     console.log("Kafka consumer connected and subscribed to 'location-topic'");
-
     await consumer.run({
       eachMessage: async ({ message }: EachMessagePayload) => {
         if (!message.value) return;
         try {
           const parsedMessage = JSON.parse(message.value.toString());
           console.log("Received Kafka message:", parsedMessage);
+          const { roomId, userId, latitude, longitude } = parsedMessage;
 
-          const { roomId, username, latitude, longitude } = parsedMessage;
-
-          if (!roomId || !username || latitude == null || longitude == null)
+          if (!roomId || !userId || latitude == null || longitude == null)
             return;
 
-          const key = `room:${roomId}:${username}`;
-          await redisClient.rpush(key, JSON.stringify({ latitude, longitude }));
-          const length = await redisClient.llen(key);
-          if (length > 10) {
-            await redisClient.ltrim(key, length - 10, -1);
-          }
-
-          await redisClient.lpush(
-            "latestMessages",
-            JSON.stringify(parsedMessage)
-          );
-          await redisClient.ltrim("latestMessages", 0, 9);
-          console.log(`Cached location for ${username} in room ${roomId}`);
+          const channelName = `location-room:${roomId}`;
+          await redisClient.publish(channelName, message.value.toString());
+          console.log(`Location to ${channelName} published`);
         } catch (err) {
           console.error("Error processing kafka message: ", err);
         }
