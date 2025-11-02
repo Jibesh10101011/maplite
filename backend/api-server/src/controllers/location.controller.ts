@@ -72,17 +72,17 @@ export const getShortestPathCoordinates = asyncHandler(async (
     const { source, destination, userId, roomId } = request.body;
     const cacheKey = `coordinates:${roomId}:${userId}`;
     
-    const data = await redisClient.get(cacheKey);
-    if (data) {
-        console.log("Received from Cache");
-        return response.status(200).json(
-            new ApiResponse(
-                200,
-                JSON.parse(data),
-                "Coordinates are successfully fetched"
-            )
-        );
-    }
+    // const data = await redisClient.get(cacheKey);
+    // if (data) {
+    //     console.log("Received from Cache");
+    //     return response.status(200).json(
+    //         new ApiResponse(
+    //             200,
+    //             JSON.parse(data),
+    //             "Coordinates are successfully fetched"
+    //         )
+    //     );
+    // }
 
     console.log("API Invoked");
     try {

@@ -1,4 +1,4 @@
-import { kafka } from "../config/kafkaClient";
+import { kafkaClient } from "../config/kafka.client";
 import { type Producer } from "kafkajs";
 
 let producer: Producer | null = null;
@@ -6,7 +6,7 @@ let producer: Producer | null = null;
 export async function connectProducer(): Promise<Producer> {
     if (producer) return producer;
     
-    producer = kafka.producer();
+    producer = kafkaClient.producer();
     
     try {
         await producer.connect();

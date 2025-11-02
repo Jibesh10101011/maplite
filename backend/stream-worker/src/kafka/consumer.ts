@@ -1,12 +1,12 @@
-import { kafka } from "../config/kafkaClient";
+import { kafkaClient } from "../config/kafka.client";
 import { Consumer, EachMessagePayload } from "kafkajs";
-import { redisClient } from "../config/redisClient";
+import { redisClient } from "../config/redis.client";
 
 let consumer: Consumer | null = null;
 
 export const connectConsumer = async (): Promise<void> => {
   try {
-    consumer = kafka.consumer({ groupId: process.env.GROUP_ID! });
+    consumer = kafkaClient.consumer({ groupId: process.env.GROUP_ID! });
     await consumer.connect();
     await consumer.subscribe({ topic: "location-topic", fromBeginning: false });
 
