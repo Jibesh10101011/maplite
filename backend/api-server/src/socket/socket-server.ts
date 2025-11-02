@@ -99,6 +99,7 @@ export function initializeMapSocketServer(io: SocketIoServer) {
       }
     });
 
+    /*
     socket.on("current_user_location", async (data: RecivedCoordinateData) => {
       const { roomId, userId, latitude, longitude } = data;
       console.log(data)
@@ -106,6 +107,8 @@ export function initializeMapSocketServer(io: SocketIoServer) {
         .to(`coordinate:${roomId}`)
         .emit("current_location", { userId, latitude, longitude });
     });
+
+    */
 
     socket.on("disconnect", () => {
       console.log("Map: client disconnected:", socket.id);
