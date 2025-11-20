@@ -48,13 +48,22 @@ export const verifyJWT = asyncHandler(
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET! as Secret
       ) as JwtPayload & { _id: string };
-      user = await User.findById(decodedRefresh._id).select(
-        "-password -refreshToken"
+      
+      user = await User.findOne({
+        _id: decodedRefresh._id,
+        refreshToken: refreshToken
+      }).select(
+        "-password"
       );
-      if (!user) throw new ApiError(401, "User not found");
+
+      if (!user) throw new ApiError(401, "Refresh token is invalid or has been rotated");
 
       const newAccessToken = user.generateAccessToken();
       const newRefreshToken = user.generateRefreshToken();
+      
+      user.refreshToken = newRefreshToken;
+      await user.save({ validateBeforeSave: false });
+
       const REFRESH_TOKEN_EXPIRY = Number(process.env.REFRESH_TOKEN_EXPIRY_SECOND!);
 
       const cookieOptions: CookieOptions = {
