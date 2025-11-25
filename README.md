@@ -78,7 +78,15 @@ npm run start:producer
 npm run start:consumer
 ```
 
-### 4️⃣ Start AI Engine
+### 4️⃣ Start API Server
+
+```shell
+cd api-server
+npm install         # If not installed
+npm run dev
+```
+
+### 5️⃣ Start AI Engine
 
 ```shell
 cd genai-engine
