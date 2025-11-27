@@ -15,7 +15,7 @@ router.route("/test").get(testLocation);
 router.route("/coordinates/:roomId")
 .get(getLocationCoordinates);
 
-router.route("/shortest/path/src-dest")  // Implment Rate Limiter
+router.route("/shortest/path/src-dest") 
 .post(
     validateSchema(CoordinateSchema), 
     getShortestPathCoordinates
